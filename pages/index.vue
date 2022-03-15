@@ -4,7 +4,7 @@
       <v-col>
         <v-text-field v-model="message" label="検索" type="text">
           <template v-slot:append>
-            <v-btn color="primary">検索</v-btn>
+            <v-btn class="btn btn-info" color="primary">検索</v-btn>
           </template>
         </v-text-field>
       </v-col>
@@ -31,10 +31,11 @@
           </picture>
         </div>
         <div class="box">
-          <p>タイトル</p>
-          <p>
-            テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-          </p>
+          <p>After a year of sporting success, 2021’s kanji character is ‘gold’</p>
+          <ul class="info_cat">
+            <li class="genre">エンタメ</li>
+            <li class="day">2021.01.07</li>
+          </ul>
         </div>
         <div class="btn">
           <v-btn-toggle v-model="text" tile color="red accent-3" group>
@@ -51,10 +52,11 @@
           </picture>
         </div>
         <div class="box">
-          <p>タイトル</p>
-          <p>
-            テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-          </p>
+          <p>In rare move, Japan to provide bulletproof vests, other defense supplies to Ukraine</p>
+          <ul class="info_cat">
+            <li class="genre">国際</li>
+            <li class="day">2021.01.07</li>
+          </ul>
         </div>
         <div class="btn">
           <v-btn-toggle v-model="text" tile color="red accent-3" group>
@@ -71,10 +73,11 @@
           </picture>
         </div>
         <div class="box">
-          <p>タイトル</p>
-          <p>
-            テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-          </p>
+          <p>Family of Sri Lankan who died in detention files suit for ¥156M damages from Japan</p>
+          <ul class="info_cat">
+            <li class="genre">国際</li>
+            <li class="day">2021.01.07</li>
+          </ul>
         </div>
         <div class="btn">
           <v-btn-toggle v-model="text" tile color="red accent-3" group>
@@ -94,6 +97,21 @@
     max-width: 1185px;
   }
 }
+.info_cat {
+  display: flex;
+}
+
+.info_cat .genre {
+  font-size: 1rem;
+  margin-right: 1rem;
+  padding-right: 1rem;
+  border-right: solid 1px #b3b3b3;
+}
+
+.info_cat .day {
+  font-size: 1rem;
+}
+
 .menu-list {
   margin: 0 auto 15px;
   justify-content: center;

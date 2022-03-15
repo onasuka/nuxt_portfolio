@@ -140,11 +140,6 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
-          title: '設定',
-          to: '/settings'
-        },
-        {
-          icon: 'mdi-chart-bubble',
           title: 'ブックマーク一覧',
           to: '/articles'
         },
@@ -153,7 +148,11 @@ export default {
           title: '記事詳細ページ',
           to: '/articles/[id]'
         },
-        
+        {
+          icon: 'mdi-chart-bubble',
+          title: '設定',
+          to: '/settings'
+        },
       ],
       miniVariant: false,
       right: true,

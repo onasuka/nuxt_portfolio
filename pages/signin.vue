@@ -46,36 +46,25 @@ import { defineComponent , reactive } from "@nuxtjs/composition-api"; //coomposi
 
 // import Vue from "vue";
 export default defineComponent({
-  data() {
-    return {
-      email: "",
-      password: "",
-      showPassword: false,
-    };
-  },
-  computed: {
-    user() {
-      return this.$store.getters["user"];
-    },
-  },
-  methods: {
-    register() {
-      this.$store.dispatch("todos/register", {
-        email: this.email,
-        password: this.password,
-      });
-    },
-  },
+
 });
 </script>
 
 <style lang="scss" scoped>
 .v-btn {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 .login-link {
   margin: 0 auto 25px;
   color: #1976d2;
   text-decoration: underline;
+}
+.login-btn {
+  padding: 10px;
+  margin: 0 auto 15px;
+}
+
+.login-google {
+  margin: 15px auto 15px;
 }
 </style>

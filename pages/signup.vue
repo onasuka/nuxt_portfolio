@@ -35,23 +35,7 @@
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-  data () {
-   return {
-     email: '',
-     password: '',
-     showPassword: false
-   }
-  },
-  computed: {
-   user () {
-     return this.$store.getters['user']
-   },
-  },
-  methods : {
-   register () {
-     this.$store.dispatch('todos/register', {email: this.email, password: this.password})
-   },
- }
+
 })
 </script>
 <style lang="scss" scoped>
@@ -59,7 +43,7 @@ h4 {
   font-size: 2rem;
 }
 .v-btn {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 .login-link {
@@ -68,6 +52,15 @@ h4 {
 }
 
 .login-txt{
-  font-size: 1.5rem;
+  font-size: 1rem;
+}
+
+.login-btn {
+  padding: 10px;
+  margin: 0 auto 15px;
+}
+
+.login-google {
+  margin: 15px auto 15px;
 }
 </style>

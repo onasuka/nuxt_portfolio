@@ -14,9 +14,7 @@ export const state = () => {
 }
 
 export const mutations = {
-  ADD_MESSAGE(state: any,message){
-    state.messages.unshift(message)
-  }
+
 }
 
 export const actions = {
