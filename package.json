@@ -1,0 +1,29 @@
+{
+  "name": "20220302_app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/firebase": "^7.5.0",
+    "core-js": "^3.19.3",
+    "daisyui": "^2.8.0",
+    "firebase": "^8.1.1",
+    "nuxt": "^2.15.8",
+    "sass": "^1.49.9",
+    "vue": "^2.6.14",
+    "vue-server-renderer": "^2.6.14",
+    "vue-template-compiler": "^2.6.14",
+    "webpack": "^4.46.0"
+  },
+  "devDependencies": {
+    "@nuxt/types": "^2.15.8",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/composition-api": "^0.32.0",
+    "@nuxtjs/vuetify": "^1.12.3"
+  }
+}
