@@ -1,3 +1,4 @@
+require('dotenv').config()
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -25,6 +26,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src:'@/plugins/axios' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -41,6 +43,9 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/firebase',
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy',
+    '@nuxtjs/dotenv'
   ],
    /*
   ** Firebase Configuration
@@ -62,7 +67,16 @@ export default {
         realtimeDb: true,
       },
     },
-
+  axios: {
+    credentials: true,
+    proxy: true
+  },
+  proxy: {
+    '/api/': {
+      target: 'https://newsapi.org/v2/',
+      pathRewrite: { '^/api/': '' }
+     }
+   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   }

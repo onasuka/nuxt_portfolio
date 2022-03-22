@@ -35,7 +35,23 @@
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-
+  data () {
+   return {
+     email: '',
+     password: '',
+     showPassword: false
+   }
+  },
+  computed: {
+   user () {
+     return this.$store.getters['user']
+   },
+  },
+  methods : {
+   register () {
+     this.$store.dispatch('todos/register', {email: this.email, password: this.password})
+   },
+ }
 })
 </script>
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-text-field v-model="message" label="検索" type="text">
+        <v-text-field label="検索" type="text">
           <template v-slot:append>
             <v-btn class="btn btn-info" color="primary">検索</v-btn>
           </template>
@@ -23,71 +23,37 @@
         <div>映画</div>
       </v-col>
     </v-row>
-    <ul>
-      <li>
-        <div>
-          <picture>
-            <img src="~/assets/img/hoge.jpg" alt="" />
-          </picture>
-        </div>
-        <div class="box">
-          <p>After a year of sporting success, 2021’s kanji character is ‘gold’</p>
-          <ul class="info_cat">
-            <li class="genre">エンタメ</li>
-            <li class="day">2021.01.07</li>
-          </ul>
-        </div>
+    <div>
+      <div 
+        class="headlines__list"
+        v-for="headline in headlines" 
+        :key="headline.id">
+        <nuxt-link :to="`headlines/${headline.slug}`">
+          <div 
+            @click.prevent="submitHeadline(headline)"
+            class="headlines__item"
+          >
+            <span :style="{backgroundImage: 'url(' + headline.urlToImage + ')'}"></span>
+            <div
+              class="headlines__item-txt">
+              <p> {{ headline.title }} </p>
+              <ul
+                class="headlines__item-info">
+                <li>{{ headline.source.name }}</li>
+                <li>{{ headline.publishedAt }}</li>
+              </ul>
+            </div>
+          </div>
+        </nuxt-link>
         <div class="btn">
-          <v-btn-toggle v-model="text" tile color="red accent-3" group>
+          <v-btn-toggle tile color="red accent-3" group>
             <v-btn>
               <v-icon>mdi-heart</v-icon>
             </v-btn>
           </v-btn-toggle>
         </div>
-      </li>
-       <li>
-        <div>
-          <picture>
-            <img src="~/assets/img/hoge.jpg" alt="" />
-          </picture>
-        </div>
-        <div class="box">
-          <p>In rare move, Japan to provide bulletproof vests, other defense supplies to Ukraine</p>
-          <ul class="info_cat">
-            <li class="genre">国際</li>
-            <li class="day">2021.01.07</li>
-          </ul>
-        </div>
-        <div class="btn">
-          <v-btn-toggle v-model="text" tile color="red accent-3" group>
-            <v-btn>
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-          </v-btn-toggle>
-        </div>
-      </li>
-       <li>
-        <div>
-          <picture>
-            <img src="~/assets/img/hoge.jpg" alt="" />
-          </picture>
-        </div>
-        <div class="box">
-          <p>Family of Sri Lankan who died in detention files suit for ¥156M damages from Japan</p>
-          <ul class="info_cat">
-            <li class="genre">国際</li>
-            <li class="day">2021.01.07</li>
-          </ul>
-        </div>
-        <div class="btn">
-          <v-btn-toggle v-model="text" tile color="red accent-3" group>
-            <v-btn>
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-          </v-btn-toggle>
-        </div>
-      </li>
-    </ul>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -97,8 +63,45 @@
     max-width: 1185px;
   }
 }
-.info_cat {
+
+.headlines__list {
   display: flex;
+  justify-content: space-between;
+  &:not(:last-of-type) {
+    margin-bottom: 30px;
+  }
+    
+  a {
+    text-decoration: none;
+  }
+}
+.headlines__item {
+  display: flex;
+
+  span {
+    display: block;
+    width: 200px;
+    height: 150px;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .headlines__item-txt {
+    width: 80%;
+    margin-left: 3.5%;
+    color: #333;
+    p {
+      margin-bottom: 5px;
+    }
+  }
+
+  .headlines__item-info {
+    padding: 0;
+    li {
+      margin-bottom: 0;
+      font-size: 14px;
+    }
+  }
 }
 
 .info_cat .genre {
@@ -151,5 +154,35 @@ li {
 
 
 <script lang='ts'>
-
+export default {
+  // async asyncData ({ $axios }) {
+  //   try {
+  //     const topHeadlines = await $axios.$get('/api/top-headlines?country=jp')
+  //     console.log('headline', topHeadlines.articles)
+  //     return {
+  //       headlines: topHeadlines.articles
+  //     }
+  //   } catch (e) {
+  //     console.log(e.message)
+  //   }
+  // }
+   async fetch ({ store }) {
+    const apiUrl = '/api/top-headlines?country=jp'
+    await store.dispatch('headlines/loadHeadlines', apiUrl)
+  },
+  computed: {
+    headlines () {
+      return this.$store.getters['headlines/headlines']
+    }
+  },
+  methods: {
+    submitHeadline (headline) {
+    // console.log(headline)
+    this.$store.dispatch('headlines/submitHeadline', headline)
+      .then(() => {
+        this.$router.push('/headlines/' + headline.slug)
+      })
+    }
+  }
+}
 </script>

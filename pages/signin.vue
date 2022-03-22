@@ -46,7 +46,26 @@ import { defineComponent , reactive } from "@nuxtjs/composition-api"; //coomposi
 
 // import Vue from "vue";
 export default defineComponent({
-
+  data() {
+    return {
+      email: "",
+      password: "",
+      showPassword: false,
+    };
+  },
+  computed: {
+    user() {
+      return this.$store.getters["user"];
+    },
+  },
+  methods: {
+    register() {
+      this.$store.dispatch("todos/register", {
+        email: this.email,
+        password: this.password,
+      });
+    },
+  },
 });
 </script>
 
