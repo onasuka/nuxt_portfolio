@@ -6,24 +6,22 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setHeadlines(state, payload) {
+  setHeadlines(state:any, payload:any) {
     state.headlines = payload;
   }, 
-  setHeadline(state, payload) {
+  setHeadline(state:any, payload:any) {
     state.headline = payload;
   },
 };
 
 export const actions = {
-  async loadHeadlines({ commit }, payload) {
+  async loadHeadlines({ commit }:any , payload:any) {
     try {
       const { articles } = await this.$axios.$get(payload);
-      // console.log({ articles })
 
-      const headlines = articles.map((article) => {
+      const headlines = articles.map((article:any) => {
         const slug = uuidv4(article.title);
         const headline = { ...article, slug };
-        console.log({ article })
         return headline;
       });
 
@@ -32,17 +30,16 @@ export const actions = {
       console.log(e);
     }
   }, 
-  submitHeadline({ commit }, headline) {
-    console.log("store", headline);
+  submitHeadline({ commit }:any , headline:any ) {
     commit("setHeadline", headline);
   },
 };
 
 export const getters = {
-  headlines(state) {
+  headlines(state:any ) {
     return state.headlines;
   }, 
-  headline(state) {
+  headline(state:any ) {
     return state.headline;
   },
 };

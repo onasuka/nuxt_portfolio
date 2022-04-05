@@ -1,11 +1,108 @@
 <template>
-  <div>
-    <div>
-      <h3>{{ headline.title }}</h3>
-      <p>{{ headline.description }}</p>
-      <img :src="headline.urlToImage">
+  <div class="article">
+    <div class="article_box">
+      <div class="info_cat">
+        <p class="genre">{{ headline.source.name }}</p>
+        <p class="day">{{ headline.publishedAt }}</p>
+      </div>
+      <div>
+        <div>
+          <div class="heading_box">
+            <h2 class="heading">{{ headline.title }}</h2>
+            <div class="btn">
+              <v-btn-toggle tile color="red accent-3" group>
+                <v-btn>
+                  <v-icon>mdi-heart</v-icon>
+                </v-btn>
+              </v-btn-toggle>
+            </div>
+          </div>
+          <img :src="headline.urlToImage" />
+          <p
+            class="text"
+            v-bind:class="[
+              fontSize(),
+              alignment(),
+              {
+                fontItalic: isItalicToggle,
+                fontUnderLine: isUnderLineToggle,
+                fontBold: isBoldToggle,
+              },
+            ]"
+          >
+            {{ headline.description }}
+          </p>
+        </div>
+        <!-- {{ this.$route.params.id }} -->
+      </div>
     </div>
-    {{ this.$route.params.id }}
+
+    <div class="dial">
+      <v-speed-dial
+        v-model="fab"
+        :direction="direction"
+        :open-on-hover="hover"
+        :transition="transition"
+      >
+        <template v-slot:activator>
+          <v-btn color="blue darken-2" dark fab>
+            <v-icon v-if="fab"> mdi-close </v-icon>
+            <v-icon v-else> mdi-dots-horizontal </v-icon>
+          </v-btn>
+        </template>
+        <v-btn fab dark small color="green" @click="iframeBtn">
+          <span>翻<br />訳</span>
+        </v-btn>
+        <v-btn fab dark small color="indigo" @click="fontSettingBtn">
+          <v-icon>mdi-format-font</v-icon>
+        </v-btn>
+      </v-speed-dial>
+    </div>
+
+    <v-card v-show="fontSetting" max-width="400" class="pa-4 fontSetting__box">
+      <div class="d-flex justify-space-between align-center">
+        <p class="fontSetting__txt">文字サイズ</p>
+        <v-radio-group v-model="sizeType" row class="fontSize__type">
+          <v-radio label="小" value="small"></v-radio>
+
+          <v-radio label="中" value="middle"></v-radio>
+
+          <v-radio label="大" value="big"></v-radio>
+        </v-radio-group>
+      </div>
+      <v-row class="pb-2 ma-0" justify="space-between">
+        <v-btn-toggle class="mr-5" multiple>
+          <v-btn v-on:click="isItalic">
+            <v-icon>mdi-format-italic</v-icon>
+          </v-btn>
+
+          <v-btn v-on:click="isBold">
+            <v-icon>mdi-format-bold</v-icon>
+          </v-btn>
+
+          <v-btn v-on:click="isUnderLine">
+            <v-icon>mdi-format-underline</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+
+        <v-btn-toggle v-model="alignType">
+          <v-btn value="alignCenter">
+            <v-icon>mdi-format-align-center</v-icon>
+          </v-btn>
+
+          <v-btn value="alignLeft">
+            <v-icon>mdi-format-align-left</v-icon>
+          </v-btn>
+
+          <v-btn value="alignRight">
+            <v-icon>mdi-format-align-right</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </v-row>
+    </v-card>
+    <div class="iframe__box"  v-show="iframeShow">
+      <iframe src="https://translate.weblio.jp/"></iframe>
+    </div>
   </div>
 </template>
 
@@ -13,10 +110,175 @@
 import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
+  data: () => ({
+    direction: "top",
+    fab: false,
+    fontSetting: false,
+    iframeShow: false,
+    fling: false,
+    hover: false,
+    tabs: null,
+    transition: "slide-y-reverse-transition",
+    sizeType: "",
+    alignType: "",
+    isItalicToggle: false,
+    isBoldToggle: false,
+    isUnderLineToggle: false,
+  }),
+  methods: {
+    fontSize() {
+      if (this.sizeType === "big") {
+        return "font-size-large";
+      } else if (this.sizeType === "small") {
+        return "font-size-small";
+      } else {
+        return "font-size-normal";
+      }
+    },
+    alignment() {
+      if (this.alignType === "alignCenter") {
+        return "font-center";
+      } else if (this.alignType === "alignLeft") {
+        return "font-left";
+      } else if (this.alignType === "alignRight") {
+        return "font-right";
+      }
+    },
+    isItalic() {
+      this.isItalicToggle == true ? (this.isItalicToggle = false) : (this.isItalicToggle = true);
+    },
+    isBold() {
+      this.isBoldToggle == true ? (this.isBoldToggle = false) : (this.isBoldToggle = true);
+    },
+    isUnderLine() {
+      this.isUnderLineToggle == true ? (this.isUnderLineToggle = false) : (this.isUnderLineToggle = true);
+    },
+    fontSettingBtn() {
+      this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
+    },
+    iframeBtn() {
+      this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
+    },
+  },
   computed: {
-    headline () {
-      return this.$store.getters['headlines/headline']
-    }
-  }
+    headline() {
+      return this.$store.getters["headlines/headline"];
+    },
+  },
 });
 </script>
+
+<style lang="scss" scoped>
+.iframe__box {
+  position: absolute;
+  top: 10%;
+  right: 0;
+  width: 90%;
+  height: 50vh;
+  z-index: 9999;
+  resize: both;
+  overflow: scroll;
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.text {
+  margin: 20px 0;
+  line-height: 1.75;
+  text-align: left;
+}
+.fontUnderLine {
+  text-decoration: underline;
+}
+.fontItalic {
+  font-style: italic;
+}
+.fontBold {
+  font-weight: bold;
+}
+.font-size-large {
+  font-size: 18pt;
+}
+.font-size-normal {
+  font-size: 14pt;
+}
+.font-size-small {
+  font-size: 10pt;
+}
+.font-center {
+  text-align: center;
+}
+.font-right {
+  text-align: right;
+}
+.font-left {
+  text-align: left;
+}
+
+img {
+  width: 100%;
+}
+
+.dial {
+  position: fixed;
+  bottom: 10%;
+  right: 2.5%;
+  span {
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+
+#create {
+  .v-speed-dial {
+    position: absolute;
+  }
+  .v-btn--floating {
+    position: relative;
+  }
+}
+
+.fontSetting {
+  &__box {
+    position: fixed;
+    bottom: 10%;
+    right: 10%;
+  }
+
+  &__txt {
+    line-height: 1;
+    margin-bottom: 0;
+  }
+}
+
+.info_cat {
+  display: flex;
+  padding-top: 20px;
+}
+
+.genre {
+  font-size: 1rem;
+  margin-right: 2.4rem;
+  padding-right: 2.4rem;
+  border-right: solid 1px #b3b3b3;
+}
+
+.day {
+  font-size: 1rem;
+}
+
+.heading {
+  padding-right: 50px;
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+}
+
+.heading_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+</style>

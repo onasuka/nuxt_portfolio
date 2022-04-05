@@ -2,43 +2,55 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-text-field label="検索" type="text">
+        <v-text-field label="検索" type="text" v-model="search_keyword">
           <template v-slot:append>
-            <v-btn class="btn btn-info" color="primary">検索</v-btn>
+            <v-btn class="btn btn-info" color="primary" @click="searchKeyword()"
+              >検索</v-btn
+            >
           </template>
         </v-text-field>
       </v-col>
     </v-row>
-    <v-row align="center" class="menu-list">
+    <v-row class="menu-list">
       <v-col md="2" class="menu-item">
-        <div>ニュース</div>
+        <a @click="newsCategory('')"> すべて </a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <div>ビジネス</div>
+        <a @click="newsCategory('business')"> ビジネス </a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <div>アニメ</div>
+        <a @click="newsCategory('entertainment')"> エンタメ </a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <div>映画</div>
+        <a @click="newsCategory('health')"> 健康 </a>
+      </v-col>
+      <v-col md="2" class="menu-item">
+        <a @click="newsCategory('science')"> サイエンス </a>
+      </v-col>
+      <v-col md="2" class="menu-item">
+        <a @click="newsCategory('sports')"> スポーツ </a>
+      </v-col>
+      <v-col md="2" class="menu-item">
+        <a @click="newsCategory('technology')"> テクノロジー </a>
       </v-col>
     </v-row>
     <div>
-      <div 
+      <div
         class="headlines__list"
-        v-for="headline in headlines" 
-        :key="headline.id">
+        v-for="headline in viewLists"
+        :key="headline.id"
+      >
         <nuxt-link :to="`headlines/${headline.slug}`">
-          <div 
+          <div
             @click.prevent="submitHeadline(headline)"
             class="headlines__item"
           >
-            <span :style="{backgroundImage: 'url(' + headline.urlToImage + ')'}"></span>
-            <div
-              class="headlines__item-txt">
-              <p> {{ headline.title }} </p>
-              <ul
-                class="headlines__item-info">
+            <span
+              :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
+            ></span>
+            <div class="headlines__item-txt">
+              <p>{{ headline.title }}</p>
+              <ul class="headlines__item-info">
                 <li>{{ headline.source.name }}</li>
                 <li>{{ headline.publishedAt }}</li>
               </ul>
@@ -54,8 +66,76 @@
         </div>
       </div>
     </div>
+    <v-pagination
+      v-model="page"
+      :length="length"
+      @input="pageChange"
+    ></v-pagination>
   </v-container>
 </template>
+
+<script lang="ts">
+export default {
+  data() {
+    return {
+      search_keyword: "",
+      page: 1,
+      length: 0,
+      lists: [],
+      viewLists: [],
+      pageSize: 10,
+    };
+  },
+  async asyncData({ store }) {
+    const apiUrl = "/api/top-headlines?country=jp&pageSize=30";
+    let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
+    return{
+      lists : store.state.headlines.headlines
+    }
+  },
+  computed: {
+    headlines() {
+      return this.$store.getters["headlines/headlines"];
+    },
+  },
+  methods: {
+    submitHeadline(headline: any) {
+      // console.log(headline)
+      this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
+        this.$router.push("/headlines/" + headline.slug);
+      });
+    },
+    newsCategory(parameter: object) {
+      const apiUrl = "/api/top-headlines?country=jp&category=";
+      console.log(apiUrl + parameter);
+      this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
+    },
+    searchKeyword() {
+      if (this.search_keyword !== "") {
+        const apiUrl = "/api/top-headlines?country=jp&q=";
+        console.log(apiUrl + this.search_keyword);
+        this.$store.dispatch(
+          "headlines/loadHeadlines",
+          apiUrl + this.search_keyword
+        );
+      }
+    },
+    pageChange( pageNumber:any ){
+      
+      this.viewLists = this.lists.slice(this.pageSize * (pageNumber - 1),this.pageSize * (pageNumber))
+      // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
+      //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
+    }
+  },
+  mounted: function(){
+    this.length = Math.ceil(this.lists.length/this.pageSize);
+    // listsの個数(30)/1ページで見れる数(10) ページ数を決める
+
+    this.viewLists = this.lists.slice(0,this.pageSize);
+    //受け取ったすべてのデータが格納されているlistsから、0からthis.pageSize(10)までをthis.viewListsに格納する どこからどこまでを表示するか決める
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 @media (min-width: 1264px) {
@@ -70,7 +150,7 @@
   &:not(:last-of-type) {
     margin-bottom: 30px;
   }
-    
+
   a {
     text-decoration: none;
   }
@@ -117,13 +197,24 @@
 
 .menu-list {
   margin: 0 auto 15px;
-  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  -ms-overflow-style: none; /* IE, Edge 対応 */
+  scrollbar-width: none;
 }
+.menu-list::-webkit-scrollbar {
+  /* Chrome, Safari 対応 */
+  display: none;
+}
+
 .menu-item {
   padding: 0;
-  font-size: 1.5rem;
   text-align: center;
   border-right: solid 1px #333;
+  a {
+    font-size: 13px;
+    color: #333;
+  }
 }
 li {
   display: flex;
@@ -151,38 +242,3 @@ li {
   margin-top: auto;
 }
 </style>
-
-
-<script lang='ts'>
-export default {
-  // async asyncData ({ $axios }) {
-  //   try {
-  //     const topHeadlines = await $axios.$get('/api/top-headlines?country=jp')
-  //     console.log('headline', topHeadlines.articles)
-  //     return {
-  //       headlines: topHeadlines.articles
-  //     }
-  //   } catch (e) {
-  //     console.log(e.message)
-  //   }
-  // }
-   async fetch ({ store }) {
-    const apiUrl = '/api/top-headlines?country=jp'
-    await store.dispatch('headlines/loadHeadlines', apiUrl)
-  },
-  computed: {
-    headlines () {
-      return this.$store.getters['headlines/headlines']
-    }
-  },
-  methods: {
-    submitHeadline (headline) {
-    // console.log(headline)
-    this.$store.dispatch('headlines/submitHeadline', headline)
-      .then(() => {
-        this.$router.push('/headlines/' + headline.slug)
-      })
-    }
-  }
-}
-</script>
