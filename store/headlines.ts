@@ -8,6 +8,7 @@ export const state = () => ({
 export const mutations = {
   setHeadlines(state:any, payload:any) {
     state.headlines = payload;
+    // console.log(state.headlines)
   }, 
   setHeadline(state:any, payload:any) {
     state.headline = payload;
@@ -17,16 +18,10 @@ export const mutations = {
 export const actions = {
   async loadHeadlines({ commit }:any , payload:any) {
     try {
-      const { articles } = await this.$axios.$get(payload);
-
-      const headlines = articles.map((article:any) => {
-        const slug = uuidv4(article.title);
-        const headline = { ...article, slug };
-        return headline;
-      });
-
-      commit("setHeadlines", headlines);
+      let articles = await this.$axios.$get(payload);
+      commit("setHeadlines", articles.results);
     } catch (e) {
+      console.log("↓ここからAPIエラー！");
       console.log(e);
     }
   }, 

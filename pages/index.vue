@@ -40,19 +40,24 @@
         v-for="headline in viewLists"
         :key="headline.id"
       >
-        <nuxt-link :to="`headlines/${headline.slug}`">
+        <nuxt-link :to="`headlines/${headline.source_id}`">
           <div
             @click.prevent="submitHeadline(headline)"
             class="headlines__item"
           >
-            <span
-              :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
-            ></span>
+            <div v-if="headline.image_url !== null">
+              <span
+                :style="{ backgroundImage: 'url(' + headline.image_url + ')' }"
+              ></span>
+            </div>
+            <div v-else>
+              <img class="headlines__img" src="~/assets/img/hoge.jpg" >
+            </div>
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
               <ul class="headlines__item-info">
-                <li>{{ headline.source.name }}</li>
-                <li>{{ headline.publishedAt }}</li>
+                <li>{{ headline.category[0] }}</li>
+                <li>{{ headline.pubDate }}</li>
               </ul>
             </div>
           </div>
@@ -87,7 +92,7 @@ export default {
     };
   },
   async asyncData({ store }) {
-    const apiUrl = "/api/top-headlines?country=jp&pageSize=30";
+    const apiUrl = "/api/";
     let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
     return{
       lists : store.state.headlines.headlines
@@ -106,13 +111,13 @@ export default {
       });
     },
     newsCategory(parameter: object) {
-      const apiUrl = "/api/top-headlines?country=jp&category=";
+      const apiUrl = "/api/&category=";
       console.log(apiUrl + parameter);
       this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
     },
     searchKeyword() {
       if (this.search_keyword !== "") {
-        const apiUrl = "/api/top-headlines?country=jp&q=";
+        const apiUrl = "/api/&q=";
         console.log(apiUrl + this.search_keyword);
         this.$store.dispatch(
           "headlines/loadHeadlines",
@@ -158,6 +163,12 @@ export default {
 .headlines__item {
   display: flex;
 
+  .headlines__img {
+    display: block;
+    width: 200px;
+    height: 150px;
+  }
+  
   span {
     display: block;
     width: 200px;

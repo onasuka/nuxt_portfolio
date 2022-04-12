@@ -1,4 +1,5 @@
 require('dotenv').config()
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -37,7 +38,7 @@ export default {
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
     '@nuxtjs/composition-api/module',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -73,8 +74,9 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'https://newsapi.org/v2/',
-      pathRewrite: { '^/api/': '' }
+      target: 'https://newsdata.io/api/1/news?apikey=pub_6307f826f0214cf067ebc635535e000745bd&country=jp',
+      logLevel: 'debug',
+      pathRewrite: { '^/api/': '' },
      }
    },
   // Build Configuration: https://go.nuxtjs.dev/config-build
