@@ -57,7 +57,7 @@
             <v-icon v-else> mdi-dots-horizontal </v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark small color="cyan" @click="iframeBtn">
+        <v-btn fab dark small color="cyan" @click="WordsShowBtn">
           <v-icon>mdi-comment-text-outline</v-icon>
         </v-btn>
         <v-btn fab dark small color="green" @click="iframeBtn">
@@ -117,7 +117,7 @@
           <v-icon> mdi-close </v-icon>
       </v-btn>
     </v-card>
-    <div class="iframe__box"  v-show="iframeShow">
+    <div class="iframe__box" v-show="iframeShow">
       <iframe src="https://translate.weblio.jp/"></iframe>
        <v-btn 
         @click="iframeBtn"
@@ -128,7 +128,7 @@
       </v-btn>
     </div>
 
-    <v-card class="pa-md-4">
+    <v-card class="pa-md-4" v-show="WordsShow">
       <div class="mb-5">
         <p class="word__ttl">英単語一覧</p>
         <v-text-field label="保存したい英単語" v-model="newWord"></v-text-field>
@@ -205,6 +205,7 @@ export default defineComponent({
     fab: false,
     fontSetting: false,
     iframeShow: false,
+    WordsShow: false,
     fling: false,
     hover: false,
     tabs: null,
@@ -264,6 +265,9 @@ export default defineComponent({
     },
     iframeBtn() {
       this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
+    },
+    WordsShowBtn() {
+      this.WordsShow == true ? (this.WordsShow = false) : (this.WordsShow = true);
     },
     // 英単語削除
     remove(index) {
@@ -414,6 +418,7 @@ img {
     position: fixed;
     bottom: 10%;
     right: 10%;
+    z-index: 9999;
   }
 
   &__txt {
