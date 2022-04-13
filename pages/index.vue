@@ -80,6 +80,8 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -91,11 +93,22 @@ export default {
       pageSize: 10,
     };
   },
-  async asyncData({ store }) {
-    const apiUrl = "/api/";
-    let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
-    return{
-      lists : store.state.headlines.headlines
+  async asyncData ({ $axios }) {
+    // const apiUrl = "/api/";
+    // let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
+    // return{
+    //   lists : store.state.headlines.headlines
+    // }
+    
+    //https://newsdata.io/api/1/news?apikey=YOUR_API_KEY&category=sports,health
+    try {
+      const topHeadlines = await $axios.$get('/api2/apikey=pub_6307f826f0214cf067ebc635535e000745bd&category=sports')
+      console.log('headline2', topHeadlines)
+      return {
+        headlines2: topHeadlines
+      }
+    } catch (e) {
+      console.log(e.message)
     }
   },
   computed: {
@@ -111,9 +124,10 @@ export default {
       });
     },
     newsCategory(parameter: object) {
-      const apiUrl = "/api/&category=";
+      const apiUrl = "https://newsdata.io/api/1/news?apikey=pub_6307f826f0214cf067ebc635535e000745bd/&category=";
+      const withParameter = apiUrl + parameter;
       console.log(apiUrl + parameter);
-      this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
+      this.$store.dispatch("headlines/loadHeadlines", withParameter);
     },
     searchKeyword() {
       if (this.search_keyword !== "") {

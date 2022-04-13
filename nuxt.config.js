@@ -69,15 +69,17 @@ export default {
       },
     },
   axios: {
+    baseURL: 'https://newsdata.io/api/1/news?',
     credentials: true,
     proxy: true
   },
   proxy: {
-    '/api/': {
-      target: 'https://newsdata.io/api/1/news?apikey=pub_6307f826f0214cf067ebc635535e000745bd&country=jp',
-      logLevel: 'debug',
-      pathRewrite: { '^/api/': '' },
-     }
+    // '/api/': {
+    //   target: 'https://newsdata.io/api/1/news?',
+    //   logLevel: 'debug',
+    //   pathRewrite: { '^/api/': '' },
+    //  }
+    '/api2/': 'https://newsdata.io/api/1/news?'
    },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
