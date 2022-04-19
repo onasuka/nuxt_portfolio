@@ -69,17 +69,14 @@ export default {
       },
     },
   axios: {
-    baseURL: 'https://newsdata.io/api/1/news?',
     credentials: true,
-    proxy: true
+    proxy: true,
   },
   proxy: {
-    // '/api/': {
-    //   target: 'https://newsdata.io/api/1/news?',
-    //   logLevel: 'debug',
-    //   pathRewrite: { '^/api/': '' },
-    //  }
-    '/api2/': 'https://newsdata.io/api/1/news?'
+    '/api/': {
+      target: 'https://newsapi.org/v2/top-headlines?country=us&pageSize=30',
+      pathRewrite: { '^/api/': '' }
+     }
    },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
