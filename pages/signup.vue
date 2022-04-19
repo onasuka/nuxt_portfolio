@@ -7,19 +7,19 @@
     <v-card-text>
       <v-form v-on:submit.prevent="onSubmit">
         <v-text-field
-          v-model="email"
+          v-model="user.email"
           prepend-icon="mdi-account-circle"
           label="Eメール"
         ></v-text-field>
         <v-text-field
-          v-model="password"
+          v-model="user.password"
           v-bind:type="showPassword ? 'text' : 'password'"
           @click:append="showPassword = !showPassword"
           prepend-icon="mdi-lock"
           append-icon="mdi-eye-off"
           label="パスワード"
         ></v-text-field>
-        <v-btn @click="register" color="info">新規登録</v-btn>
+        <v-btn @click="register(user)" color="info">新規登録</v-btn>
       </v-form>
     </v-card-text>
     <v-btn class="login-google d-block">Googleで登録 </v-btn>
@@ -37,19 +37,22 @@ import Vue from 'vue'
 export default Vue.extend({
   data () {
    return {
-     email: '',
-     password: '',
+     user: {
+       email: '',
+       password: '',
+     },
      showPassword: false
    }
   },
-  computed: {
-   user () {
-     return this.$store.getters['user']
-   },
-  },
+  // computed: {
+  //  user () {
+  //    return this.$store.getters['user']
+  //  },
+  // },
   methods : {
-   register () {
-     this.$store.dispatch('todos/register', {email: this.email, password: this.password})
+   register (user) {
+     this.$store.dispatch("headlines/register", {email: this.user.email, password: this.user.password})
+    //  this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
    },
  }
 })

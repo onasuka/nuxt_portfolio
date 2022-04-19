@@ -16,4 +16,9 @@ if(!firebase.app.length) {
     firebase.initializeApp(clientCredentials);
 }
 
-export default firebase;
+// export default firebase;
+export default function (app, inject) {
+    //（'呼び出すときの名前','firebase内の機能を呼び出している'）
+  inject('firebase', firebase) 
+  inject('auth', firebase.auth()
+}

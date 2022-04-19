@@ -4,21 +4,22 @@ import moment from "moment";
 export const state = () => ({
   headlines: [],
   headline: null,
+  user: null,
 });
 
 export const mutations = {
   setHeadlines(state:any, payload:any) {
     state.headlines = payload
-    // console.log(payload + "読み込めているよ")
     for (let i = 0; i < payload.length; i++) {
       state.headlines[i].publishedAt = moment(payload.publishedAt).format("YYYY年M月D日")
     }
-    // console.log(state.headlines)
   }, 
   setHeadline(state:any, payload:any) {
     state.headline = payload
   },
-  
+  SET_USER(state, user) {
+    state.user = user
+  }
 };
 
 export const actions = {
@@ -42,6 +43,35 @@ export const actions = {
     commit("setHeadline", headline)
   },
 
+  async onAuthStateChangedAction(state, { authUser, claims }) {
+    if (!authUser) {
+      // authされていない場合
+      state.commit('SET_USER', null)
+
+      // リダイレクトの設定
+      this.$router.push({
+        path: '/auth/aignin',
+      })
+    } else {
+      // authされている場合
+      const { uid, email } = authUser
+      state.commit('SET_USER', {
+        uid,
+        email,
+      })
+    }
+  },
+  register() {
+    console.log(this.user.email)
+    this.$auth.createUserWithEmailAndPassword(this.user.email,this.user.password)
+      .then(function(user){
+        alert("登録しました");
+      })
+
+  },
+  hogehoge() {
+    console.log('いけてr')
+  }
 };
 
 export const getters = {
@@ -51,4 +81,7 @@ export const getters = {
   headline(state:any ) {
     return state.headline
   },
+  getUser(state) {
+    return state.user
+  }
 };

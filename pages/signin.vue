@@ -42,30 +42,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent , reactive } from "@nuxtjs/composition-api"; //coompositionを使えるように
+import { defineComponent , reactive } from "@nuxtjs/composition-api";
 
 // import Vue from "vue";
 export default defineComponent({
+  layout:'signin',
   data() {
     return {
-      email: "",
-      password: "",
+      snackbar: false,
+      snackbarText: 'エラーはありません',
+      auth: {
+        email: '',
+        password: ''
+      },
       showPassword: false,
-    };
-  },
-  computed: {
-    user() {
-      return this.$store.getters["user"];
-    },
+    }
   },
   methods: {
-    register() {
-      this.$store.dispatch("todos/register", {
-        email: this.email,
-        password: this.password,
-      });
-    },
-  },
+    login() {
+      let that = this
+      this.$fire.auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
+      .catch(function(error) {
+        that.snackbarText = error.message
+        that.snackbar = true
+      }).then((user) => {
+        $nuxt.$router.push('/')
+      })
+    }
+  }
 });
 </script>
 

@@ -52,22 +52,29 @@ export default {
   ** Firebase Configuration
   */
   firebase: {
-      config: {
-        apiKey: 'AIzaSyCCrjodp3GuXJoNSjst5ukSTNcPY0w7R-Y',
-        authDomain: 'english-article-adee4.firebaseapp.com',
-        projectId: 'english-article-adee4',
-        storageBucket: 'english-article-adee4.appspot.com',
-        messagingSenderId: '280426861108',
-        appId: '1:280426861108:web:2b18a0b0507cda9385f061',
-        measurementId: 'G-T6W7BBLDL1'
-      },
-      services: {
-        auth: true,
-        firestore: true,
-        storage: true,
-        realtimeDb: true,
-      },
+    config: {
+      apiKey: 'AIzaSyCCrjodp3GuXJoNSjst5ukSTNcPY0w7R-Y',
+      authDomain: 'english-article-adee4.firebaseapp.com',
+      projectId: 'english-article-adee4',
+      storageBucket: 'english-article-adee4.appspot.com',
+      messagingSenderId: '280426861108',
+      appId: '1:280426861108:web:2b18a0b0507cda9385f061',
+      measurementId: 'G-T6W7BBLDL1'
     },
+    services: {
+      auth: {
+        persistence: 'local', // default
+        initialize: {
+          onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
+          onAuthStateChangedAction: 'onAuthStateChangedAction',
+          subscribeManually: false
+        },
+        ssr: false, // default
+      },
+      firestore: true,
+      storage: true
+    },
+  },
   axios: {
     credentials: true,
     proxy: true,
