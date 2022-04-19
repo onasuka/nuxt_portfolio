@@ -1,24 +1,32 @@
-// import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
 
 export const state = () => ({
   headlines: [],
   headline: null,
-  user: null,
+  authUser: null
 });
 
 export const mutations = {
   setHeadlines(state:any, payload:any) {
     state.headlines = payload
+    // console.log(payload + "読み込めているよ")
     for (let i = 0; i < payload.length; i++) {
       state.headlines[i].publishedAt = moment(payload.publishedAt).format("YYYY年M月D日")
     }
+    // console.log(state.headlines)
   }, 
   setHeadline(state:any, payload:any) {
     state.headline = payload
   },
-  SET_USER(state, user) {
-    state.user = user
+  RESET_STORE: (state:any) => {
+    Object.assign(state, state)
+  },
+
+  SET_AUTH_USER: (state:any, { authUser }:any) => {
+    state.authUser = {
+      uid: authUser.uid,
+      email: authUser.email
+    }
   }
 };
 
@@ -42,36 +50,52 @@ export const actions = {
   submitHeadline({ commit }:any , headline:any ) {
     commit("setHeadline", headline)
   },
+  async nuxtServerInit({ dispatch }:any, ctx:any) {
+    // INFO -> Nuxt-fire Objects can be accessed in nuxtServerInit action via this.$fire___, ctx.$fire___ and ctx.app.$fire___'
 
-  async onAuthStateChangedAction(state, { authUser, claims }) {
-    if (!authUser) {
-      // authされていない場合
-      state.commit('SET_USER', null)
+    /** Get the VERIFIED authUser on the server */
+    if (ctx.res && ctx.res.locals && ctx.res.locals.user) {
+      const { allClaims: claims, ...authUser } = ctx.res.locals.user
 
-      // リダイレクトの設定
-      this.$router.push({
-        path: '/auth/aignin',
-      })
-    } else {
-      // authされている場合
-      const { uid, email } = authUser
-      state.commit('SET_USER', {
-        uid,
-        email,
+      console.info(
+        'Auth User verified on server-side. User: ',
+        authUser,
+        'Claims:',
+        claims
+      )
+
+      await dispatch('onAuthStateChanged', {
+        authUser,
+        claims,
       })
     }
   },
-  register() {
-    console.log(this.user.email)
-    this.$auth.createUserWithEmailAndPassword(this.user.email,this.user.password)
-      .then(function(user){
-        alert("登録しました");
-      })
 
+  async onAuthStateChanged({ commit }:any, { authUser }:any) {
+    if (!authUser) {
+      commit('RESET_STORE')
+      return
+    }
+    if (authUser && authUser.getIdToken) {
+      try {
+        const idToken = await authUser.getIdToken(true)
+        console.info('idToken', idToken)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    commit('SET_AUTH_USER', { authUser })
   },
-  hogehoge() {
-    console.log('いけてr')
-  }
+
+  checkVuexStore(ctx:any) {
+    if (this.$fire.auth === null) {
+      throw 'Vuex Store example not working - this.$fire.auth cannot be accessed.'
+    }
+
+    alert(
+      'Success. Nuxt-fire Objects can be accessed in store actions via this.$fire___'
+    )
+  },
 };
 
 export const getters = {
@@ -81,7 +105,11 @@ export const getters = {
   headline(state:any ) {
     return state.headline
   },
-  getUser(state) {
-    return state.user
+  isLoggedIn: (state) => {
+    try {
+      return state.authUser.uid !== null
+    } catch {
+      return false
+    }
   }
 };

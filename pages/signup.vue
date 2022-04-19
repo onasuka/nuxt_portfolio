@@ -19,7 +19,7 @@
           append-icon="mdi-eye-off"
           label="パスワード"
         ></v-text-field>
-        <v-btn @click="register(user)" color="info">新規登録</v-btn>
+        <v-btn @click="createUser" color="info">新規登録</v-btn>
       </v-form>
     </v-card-text>
     <v-btn class="login-google d-block">Googleで登録 </v-btn>
@@ -34,6 +34,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapState, mapGetters } from 'vuex'
+
 export default Vue.extend({
   data () {
    return {
@@ -44,17 +46,31 @@ export default Vue.extend({
      showPassword: false
    }
   },
-  // computed: {
-  //  user () {
-  //    return this.$store.getters['user']
-  //  },
-  // },
+  computed: {
+    ...mapState({
+      authUser: (state: any) => state.authUser,
+    }),
+    ...mapGetters({
+      isLoggedIn: 'isLoggedIn',
+    }),
+  },
   methods : {
-   register (user) {
-     this.$store.dispatch("headlines/register", {email: this.user.email, password: this.user.password})
-    //  this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
-   },
- }
+  //  register () {
+  //    this.$store.dispatch("headlines/register", {email: this.user.email, password: this.user.password})
+  //   //  this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
+  //  },
+  async createUser() {
+      try {
+        await this.$fire.auth.createUserWithEmailAndPassword(
+          this.user.email,
+          this.user.password
+        )
+      } catch (e) {
+        alert(e)
+      }
+    },
+  },
+
 })
 </script>
 <style lang="scss" scoped>
