@@ -70,13 +70,12 @@ export default {
     },
   axios: {
     credentials: true,
-    proxy: true
+    proxy: true,
   },
   proxy: {
     '/api/': {
-      target: 'https://newsdata.io/api/1/news?apikey=pub_6307f826f0214cf067ebc635535e000745bd&country=jp',
-      logLevel: 'debug',
-      pathRewrite: { '^/api/': '' },
+      target: 'https://newsapi.org/v2/top-headlines?country=us&pageSize=30',
+      pathRewrite: { '^/api/': '' }
      }
    },
   // Build Configuration: https://go.nuxtjs.dev/config-build

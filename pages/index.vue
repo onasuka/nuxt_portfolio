@@ -13,25 +13,25 @@
     </v-row>
     <v-row class="menu-list">
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('')"> すべて </a>
+        <a @click="newsCategory('')">すべて</a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('business')"> ビジネス </a>
+        <a @click="newsCategory('business')">ビジネス</a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('entertainment')"> エンタメ </a>
+        <a @click="newsCategory('entertainment')">エンタメ</a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('health')"> 健康 </a>
+        <a @click="newsCategory('health')">健康</a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('science')"> サイエンス </a>
+        <a @click="newsCategory('science')">サイエンス</a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('sports')"> スポーツ </a>
+        <a @click="newsCategory('sports')">スポーツ </a>
       </v-col>
       <v-col md="2" class="menu-item">
-        <a @click="newsCategory('technology')"> テクノロジー </a>
+        <a @click="newsCategory('technology')">テクノロジー </a>
       </v-col>
     </v-row>
     <div>
@@ -40,14 +40,14 @@
         v-for="headline in viewLists"
         :key="headline.id"
       >
-        <nuxt-link :to="`headlines/${headline.source_id}`">
+        <nuxt-link :to="`headlines/${headline.slug}`">
           <div
             @click.prevent="submitHeadline(headline)"
             class="headlines__item"
           >
-            <div v-if="headline.image_url !== null">
+            <div v-if="headline.urlToImage !== null">
               <span
-                :style="{ backgroundImage: 'url(' + headline.image_url + ')' }"
+                :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
               ></span>
             </div>
             <div v-else>
@@ -56,15 +56,16 @@
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
               <ul class="headlines__item-info">
-                <li>{{ headline.category[0] }}</li>
-                <li>{{ headline.pubDate }}</li>
+                <li>{{ headline.source.name }}</li>
+                <li>{{ headline.publishedAt }}</li>
               </ul>
             </div>
           </div>
         </nuxt-link>
         <div class="btn">
           <v-btn-toggle tile color="red accent-3" group>
-            <v-btn>
+            <v-btn
+            @click.prevent="favorite(post)">
               <v-icon>mdi-heart</v-icon>
             </v-btn>
           </v-btn-toggle>
@@ -94,43 +95,40 @@ export default {
   async asyncData({ store }) {
     const apiUrl = "/api/";
     let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
+    // console.log(store.state.headlines.headlines)
     return{
       lists : store.state.headlines.headlines
     }
   },
   computed: {
-    headlines() {
+    filterPages() {
       return this.$store.getters["headlines/headlines"];
     },
   },
   methods: {
     submitHeadline(headline: any) {
-      // console.log(headline)
-      this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
+        this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
         this.$router.push("/headlines/" + headline.slug);
       });
     },
     newsCategory(parameter: object) {
       const apiUrl = "/api/&category=";
-      console.log(apiUrl + parameter);
+      console.log(apiUrl  + parameter);
       this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
+      // return this.lists = this.$store.state.headlines.headlines
     },
     searchKeyword() {
       if (this.search_keyword !== "") {
         const apiUrl = "/api/&q=";
         console.log(apiUrl + this.search_keyword);
-        this.$store.dispatch(
-          "headlines/loadHeadlines",
-          apiUrl + this.search_keyword
-        );
+        this.$store.dispatch("headlines/loadHeadlines",apiUrl + this.search_keyword);
       }
     },
     pageChange( pageNumber:any ){
-      
       this.viewLists = this.lists.slice(this.pageSize * (pageNumber - 1),this.pageSize * (pageNumber))
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
-    }
+    },
   },
   mounted: function(){
     this.length = Math.ceil(this.lists.length/this.pageSize);
@@ -139,6 +137,14 @@ export default {
     this.viewLists = this.lists.slice(0,this.pageSize);
     //受け取ったすべてのデータが格納されているlistsから、0からthis.pageSize(10)までをthis.viewListsに格納する どこからどこまでを表示するか決める
   },
+  watch: {
+    filterPages(){
+      this.lists = this.$store.state.headlines.headlines
+      this.length = Math.ceil(this.lists.length/this.pageSize);
+      this.viewLists = this.lists.slice(0,this.pageSize);
+      this.page = 1;
+    }
+  }
 };
 </script>
 

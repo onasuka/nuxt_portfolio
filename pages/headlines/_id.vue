@@ -2,8 +2,8 @@
   <div class="article">
     <div class="article_box">
       <div class="info_cat">
-        <p class="genre">ジャンル：{{ headline.category[0] }}</p>
-        <p class="day">{{ headline.pubDate }}</p>
+        <p class="genre">ジャンル：{{ headline.source.name }}</p>
+        <p class="day">{{ headline.publishedAt }}</p>
       </div>
       <div>
         <div>
@@ -17,7 +17,7 @@
               </v-btn-toggle>
             </div>
           </div>
-          <img :src="headline.image_url" />
+          <img :src="headline.urlToImage" />
           <p
             class="text"
             v-bind:class="[
@@ -30,15 +30,11 @@
               },
             ]"
           >
-            <span v-if="headline.full_description">
-              {{ headline.full_description }}
-            </span>
-            <span v-else>
-              {{ headline.description }}
-              <a :href="headline.link">
-                Complete Article
-              </a>
-            </span>
+            {{ headline.description }}
+            <br>
+            <a :href="headline.url" target="_blank">
+              Complete Article
+            </a>
           </p>
         </div>
       </div>
@@ -274,7 +270,7 @@ export default defineComponent({
       this.wordsData.splice(index, 1);
     },
     add() {
-      if (!this.newWord.value || !this.newMeaning.value) {
+      if (!this.newWord || !this.newMeaning) {
         return
       }
       this.wordsData.push({
@@ -285,13 +281,7 @@ export default defineComponent({
       this.newMeaning = ""
     },
     change(index) {
-
-      // this.wordsData.splice(index, 1, {
-      //   word: changeWord,
-      //   meaning: this.wordData.meaning,
-      //   isEditing: false
-      // })
-        console.log(this.wordsData[index])
+      this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
     },
     edit(index){
       this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
