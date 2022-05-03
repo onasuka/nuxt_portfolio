@@ -141,7 +141,7 @@
       </div>
       <div 
         v-for="(wordData, index) in wordsData"
-        v-bind:key="index"
+        :key="index"
         class="word__box">
         <div class="pt-2 d-flex justify-space-between align-end" v-if="!wordData.isEditing">
           <div>
@@ -275,7 +275,8 @@ export default defineComponent({
       }
       this.wordsData.push({
         word: this.newWord,
-        meaning: this.newMeaning
+        meaning: this.newMeaning,
+        isEditing: false
       })
       this.newWord = ""
       this.newMeaning = ""
@@ -287,13 +288,13 @@ export default defineComponent({
       this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
     },
     editTask(key:any, wordData:any) {
-      wordData.word = this.$refs[wordData.id][0].value
-      wordData.meaning = this.$refs[wordData.id][1].value
+      wordData.word = this.wordData.id[0].value
+      wordData.meaning = this.wordData.id[1].value
       this.$set(this.isEditing, key, false)
     },
   },
   computed: {
-    headline() {
+    headline():any {
       return this.$store.getters["headlines/headline"];
     },
   },

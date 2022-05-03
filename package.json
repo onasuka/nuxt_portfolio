@@ -15,7 +15,7 @@
     "@nuxtjs/proxy": "^2.1.0",
     "core-js": "^3.19.3",
     "daisyui": "^2.8.0",
-    "firebase": "^9.6.11",
+    "firebase": "^9.7.0",
     "moment": "^2.29.2",
     "nuxt": "^2.15.8",
     "sass": "^1.49.9",

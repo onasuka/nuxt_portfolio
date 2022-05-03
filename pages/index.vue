@@ -65,7 +65,7 @@
         <div class="btn">
           <v-btn-toggle tile color="red accent-3" group>
             <v-btn
-            @click.prevent="favorite(post)">
+              @click.prevent="favorite">
               <v-icon>mdi-heart</v-icon>
             </v-btn>
           </v-btn-toggle>
@@ -92,7 +92,7 @@ export default {
       pageSize: 10,
     };
   },
-  async asyncData({ store }) {
+  async asyncData({ store }:any) {
     const apiUrl = "/api/";
     let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
     // console.log(store.state.headlines.headlines)
@@ -128,6 +128,14 @@ export default {
       this.viewLists = this.lists.slice(this.pageSize * (pageNumber - 1),this.pageSize * (pageNumber))
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
+    },
+    favorite() {
+      this.$fire.firestore.collection("tasks").add({ 
+        title: "AAAAAAAAAAAAAAAAAAA",
+        // userId: auth.currentUser.uid 
+        // userId: this.$fire.auth.currentUser.uid 
+        userId: this.$fire.auth.currentUser
+      });
     },
   },
   mounted: function(){
