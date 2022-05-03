@@ -266,7 +266,7 @@ export default defineComponent({
       this.WordsShow == true ? (this.WordsShow = false) : (this.WordsShow = true);
     },
     // 英単語削除
-    remove(index) {
+    remove(index:any) {
       this.wordsData.splice(index, 1);
     },
     add() {
@@ -280,13 +280,13 @@ export default defineComponent({
       this.newWord = ""
       this.newMeaning = ""
     },
-    change(index) {
+    change(index:any) {
       this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
     },
-    edit(index){
+    edit(index:any){
       this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
     },
-    editTask(key, wordData) {
+    editTask(key:any, wordData:any) {
       wordData.word = this.$refs[wordData.id][0].value
       wordData.meaning = this.$refs[wordData.id][1].value
       this.$set(this.isEditing, key, false)
