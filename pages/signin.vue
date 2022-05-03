@@ -8,12 +8,12 @@
       <v-card-text>
         <v-form v-on:submit.prevent="onSubmit">
           <v-text-field
-            v-model="email"
+            v-model="user.email"
             prepend-icon="mdi-account-circle"
             label="Eメール"
           ></v-text-field>
           <v-text-field
-            v-model="password"
+            v-model="user.password"
             v-bind:type="showPassword ? 'text' : 'password'"
             @click:append="showPassword = !showPassword"
             prepend-icon="mdi-lock"
@@ -21,14 +21,13 @@
             label="パスワード"
           ></v-text-field>
           <div class="text-center mb-5">
-            <v-btn class="login-btn d-block" @click="register" color="info">ログイン</v-btn>
+            <v-btn class="login-btn d-block" @click="signInUser" color="info">ログイン</v-btn>
             <nuxt-link class="login-link" to="/signup">パスワードを忘れた方</nuxt-link>
           </div>
 
           <v-divider></v-divider>
 
-          <v-btn @click="googleLogin" class="login-google d-block">Googleで登録 </v-btn>
-          <v-btn class="login-google d-block">Twitterで登録 </v-btn>
+          <!-- <v-btn @click="googleLogin" class="login-google d-block">Googleで登録 </v-btn> -->
         </v-form>
       </v-card-text>
 
@@ -51,24 +50,25 @@ export default defineComponent({
     return {
       snackbar: false,
       snackbarText: 'エラーはありません',
-      auth: {
-        email: '',
-        password: ''
+      user: {
+       email: '',
+       password: '',
       },
       showPassword: false,
     }
   },
   methods: {
-    login() {
-      let that = this
-      this.$fire.auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
-      .catch(function(error) {
-        that.snackbarText = error.message
-        that.snackbar = true
-      }).then((user) => {
-        $nuxt.$router.push('/')
-      })
-    }
+    async signInUser() {
+      try {
+        await this.$fire.auth.signInWithEmailAndPassword(
+          this.user.email,
+          this.user.password
+        )
+        this.$router.push({ path: '/' })
+      } catch (e) {
+        alert(e)
+      }
+    },
   }
 });
 </script>

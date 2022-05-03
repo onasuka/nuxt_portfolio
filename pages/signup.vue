@@ -22,12 +22,11 @@
         <v-btn @click="createUser" color="info">新規登録</v-btn>
       </v-form>
     </v-card-text>
-    <v-btn class="login-google d-block">Googleで登録 </v-btn>
-    <v-btn class="login-google d-block mb-4">Twitterで登録 </v-btn>
+    <v-btn class="login-google d-block" @click="registerGoogle">Googleで登録 </v-btn>
     <v-divider></v-divider>
     <div class="pt-8 pb-4 pl-10 login-txt">
       <span>すでにアカウントをお持ちですか？</span>
-      <nuxt-link class="login-link" to="/signup">ログインに移動</nuxt-link>
+      <nuxt-link class="login-link" to="/signin">ログインに移動</nuxt-link>
     </div>
   </v-card>
 </template>
@@ -35,6 +34,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapState, mapGetters } from 'vuex'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+
 
 export default Vue.extend({
   data () {
@@ -55,23 +56,30 @@ export default Vue.extend({
     }),
   },
   methods : {
-  //  register () {
-  //    this.$store.dispatch("headlines/register", {email: this.user.email, password: this.user.password})
-  //   //  this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
-  //  },
-  async createUser() {
+    async createUser() {
       try {
         await this.$fire.auth.createUserWithEmailAndPassword(
           this.user.email,
           this.user.password
         )
+        this.$router.push({ path: '/' })
       } catch (e) {
         alert(e)
       }
     },
+    registerGoogle() {
+      const provider = new GoogleAuthProvider()
+      const auth = getAuth()
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          this.$router.push({ path: '/' })
+        }).catch((error) => {
+          console.error(error)
+      })
+    }
   },
 
-})
+ })
 </script>
 <style lang="scss" scoped>
 h4 {
