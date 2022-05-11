@@ -3,7 +3,6 @@ import moment from "moment";
 export const state = () => ({
   headlines: [],
   headline: null,
-  authUser:null
 });
 
 export const mutations = {
@@ -18,18 +17,6 @@ export const mutations = {
   setHeadline(state:any, payload:any) {
     state.headline = payload
   },
-  setAuthUser(state:any, payload:any) {
-    state.authUser 
-  },
-  RESET_STORE: (state) => {
-    Object.assign(state, initialState())
-  },
-  SET_AUTH_USER: (state, { authUser }) => {
-    state.authUser = {
-      uid: authUser.uid,
-      email: authUser.email
-    }
-  }
 };
 
 export const actions = {
@@ -51,25 +38,6 @@ export const actions = {
   }, 
   submitHeadline({ commit }:any , headline:any ) {
     commit("setHeadline", headline)
-  },
-  // userData({ commit }:any , user:any) {
-  //   console.log(user)
-  //   commit("setAuthUser", user)
-  // }
-  async onAuthStateChanged({ commit }:any, { authUser }:any) {
-    if (!authUser) {
-      commit('RESET_STORE')
-      return
-    }
-    if (authUser && authUser.getIdToken) {
-      try {
-        const idToken = await authUser.getIdToken(true)
-        console.info('idToken', idToken)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    commit('SET_AUTH_USER', { authUser })
   },
 };
 

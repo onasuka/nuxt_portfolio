@@ -18,74 +18,21 @@
             </p>
           </div>
           <div class="btn">
-            <v-btn-toggle v-model="text" mandatory tile color="red accent-3" group>
-              <v-btn>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </div>
-        </li>
-         <li>
-          <div>
-            <picture>
-              <img src="~/assets/img/hoge.jpg" alt="" />
-            </picture>
-          </div>
-          <div class="box">
-            <p>タイトル</p>
-            <p>
-              テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-            </p>
-          </div>
-          <div class="btn">
-            <v-btn-toggle v-model="text" mandatory tile color="red accent-3" group>
-              <v-btn>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </div>
-        </li>
-         <li>
-          <div>
-            <picture>
-              <img src="~/assets/img/hoge.jpg" alt="" />
-            </picture>
-          </div>
-          <div class="box">
-            <p>タイトル</p>
-            <p>
-              テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-            </p>
-          </div>
-          <div class="btn">
-            <v-btn-toggle v-model="text" tile mandatory color="red accent-3" group>
-              <v-btn>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </div>
-        </li>
-         <li>
-          <div>
-            <picture>
-              <img src="~/assets/img/hoge.jpg" alt="" />
-            </picture>
-          </div>
-          <div class="box">
-            <p>タイトル</p>
-            <p>
-              テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-            </p>
-          </div>
-          <div class="btn">
-            <v-btn-toggle v-model="text" tile mandatory color="red accent-3" group>
-              <v-btn>
+            <v-btn-toggle mandatory tile color="red accent-3" group>
+             <v-btn
+              @click.prevent="hoge()">
                 <v-icon>mdi-heart</v-icon>
               </v-btn>
             </v-btn-toggle>
           </div>
         </li>
       </ul>
+        <div
+        class="headlines__list"
+        v-for="headline in marklists"
+        :key="headline.id"
+      >{{headline}}</div>
+      
     </v-layout>
   </v-container>
 </template>
@@ -95,14 +42,21 @@ import Vue from "vue";
 export default Vue.extend({
   data() {
     return {
-      headers: [
-        { text: "タイトル", value: "title" },
-        { text: "内容", value: "contents" },
-        { text: "ステータス", value: "selectItem" },
-        { text: "操作", value: "actions", sortable: false },
-      ],
+      marklists: [],
     };
   },
+  async asyncData({ store }:any) {
+    let items = await store.dispatch("bookMarks");
+    return{
+      marklists : store.state.marklists
+    }
+  },
+  methods: {
+    hoge() {
+      console.log(this.$store.state.user.uid)
+      this.$store.dispatch("bookMarks");
+    }
+  }
 });
 </script>
 

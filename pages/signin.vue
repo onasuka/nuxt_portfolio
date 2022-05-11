@@ -64,7 +64,6 @@ export default defineComponent({
           this.user.email,
           this.user.password
         )
-        this.$store.dispatch("headlines/onAuthStateChanged", this.user);
         this.$router.push({ path: '/' })
       } catch (e) {
         alert(e)
