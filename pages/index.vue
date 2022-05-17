@@ -11,6 +11,8 @@
         </v-text-field>
       </v-col>
     </v-row>
+    <!-- {{ this.bookMarkTitle }} -->
+    {{  this.$store.getters.setTitle }}
     <v-row class="menu-list">
       <v-col md="2" class="menu-item">
         <a @click="newsCategory('')">すべて</a>
@@ -34,6 +36,7 @@
         <a @click="newsCategory('technology')">テクノロジー </a>
       </v-col>
     </v-row>
+    {{selected}}
     <div>
       <div
         class="headlines__list"
@@ -55,6 +58,8 @@
             </div>
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
+              {{ headline.slug }}
+              {{ selected }}
               <ul class="headlines__item-info">
                 <li>{{ headline.source.name }}</li>
                 <li>{{ headline.publishedAt }}</li>
@@ -64,8 +69,11 @@
         </nuxt-link>
         <div
          class="btn">
-          <v-btn-toggle tile color="red accent-3" group>
+          <v-btn-toggle
+            v-model="selected"
+            tile color="red accent-3" group>
             <v-btn
+              :value="headline.slug"
               @click.prevent="favorite(headline)">
               <v-icon>mdi-heart</v-icon>
             </v-btn>
@@ -91,11 +99,15 @@ export default {
       lists: [],
       viewLists: [],
       pageSize: 10,
+      bookMarkTitle:[],
+      selected:undefined
     };
   },
+  
   async asyncData({ store }:any) {
     const apiUrl = "/api/";
     let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
+    let bookMark = await store.dispatch("bookMarks");
     return{
       lists : store.state.headlines.headlines
     }
@@ -104,6 +116,14 @@ export default {
     filterPages() {
       return this.$store.getters["headlines/headlines"];
     },
+    // bookMarkWach() {
+    //   return this.$store.getters["setTitle"];
+    // },
+    selected:{
+      set(x){
+        this.$emit("change", x)
+      },
+    }
   },
   methods: {
     submitHeadline(headline: any) {
@@ -129,9 +149,20 @@ export default {
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
-    favorite(headline) {
-      console.log(headline)
-       this.$store.dispatch('bookMark',headline)
+    favorite(headline:any) {
+      let bookMarkTitle = this.$store.getters.setTitle;
+      
+      // console.log(bookMarkTitle);
+      // console.log(headline.title);
+      if( bookMarkTitle.includes(headline.title) ) {
+        this.$store.dispatch('bookMarkDelete',headline)
+        this.bookMarkTitle =  this.$store.getters.setTitle
+        console.log("あるよ")
+      } else {
+        this.$store.dispatch('bookMark',headline)
+        this.bookMarkTitle =  this.$store.getters.setTitle
+        console.log("ないよ")
+      }
     },
   },
   mounted: function(){
@@ -147,7 +178,10 @@ export default {
       this.length = Math.ceil(this.lists.length/this.pageSize);
       this.viewLists = this.lists.slice(0,this.pageSize);
       this.page = 1;
-    }
+    },
+    // bookMarkWach(){
+    //   this.bookMarkTitle = this.$store.getters.setTitle
+    // }
   }
 };
 </script>

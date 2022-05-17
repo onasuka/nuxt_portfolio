@@ -12,18 +12,26 @@ export * from "~/utils/store-accessor";
 //5/11追加分
 import { auth, app } from "~/plugins/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, addDoc, getFirestore , doc, onSnapshot } from "firebase/firestore";
+import { collection, setDoc, getFirestore , doc, deleteDoc ,getDocs } from "firebase/firestore";
 import { LoaderOptionsPlugin } from "webpack";
 
 const db = getFirestore(app);
-const userId = auth().currentUser?.uid;
+let userId = "";
+
+auth().onAuthStateChanged(function(user) {
+  // console.log(user?.uid)
+  if (user) {
+    return userId =user.uid
+  }
+});
 
 export const strict = false;
 
 export const state = () => ({
   user: null,
   loggedIn: false,
-  marklists:[]
+  marklists:[],
+  markTitles: [],
 });
 
 export const mutations = {
@@ -37,7 +45,17 @@ export const mutations = {
     state.loggedIn = false;
   },
   setArticle(state:any,payload:any) {
-    state.marklists = payload
+    let markitem = state.marklists
+    markitem.push(payload)
+    // console.log(state.marklists)
+  },
+  setTitle(state ,payload) {
+    let title = state.markTitles
+    title.push(payload)
+    // console.log(state.markTitles)
+  },
+  signOut(state) {
+    state.markTitles = []
   }
 };
 
@@ -62,42 +80,48 @@ export const actions = {
     return auth().signInWithPopup(new auth.GoogleAuthProvider());
   },
 
-  signOut() {
+  signOut({ commit }:any) {
+    commit("signOut")
     return auth().signOut();
   },
   async bookMarks({ commit }:any) {
-    // const querySnapshot = await getDocs(collection(db, `${userId}`));
-    // querySnapshot.forEach((doc) => {
-    //   let marksitem = doc.data()
-    //   console.log(`${doc.id} => ${doc.data()}`);
-    //   commit("setArticle", marksitem)
-    // });
-    console.log(userId)
-    const unsub = onSnapshot(doc(db, "cities", "SF"), (doc) => {
-        console.log("Current data: ", doc.data());
-    });
+      const querySnapshot = await getDocs(collection(db, `${userId}`));
+      console.log(querySnapshot.docs)
+      querySnapshot.forEach((doc) => {
+        let marksitem = doc.data()
+        commit("setArticle" , marksitem)
+        commit("setTitle" , marksitem.title)
+      });
+
   },
   bookMark({ commit }:any , headline:any) {
-    // console.log(auth().currentUser?.uid)
-    console.log(headline)
-    const docRef = addDoc(collection(db, `${userId}`), {
-        author: headline.author,
-        content: headline.content,
-        description: headline.description,
-        publishedAt: headline.publishedAt,
-        slug: headline.slug,
-        title: headline.title,
-        url: headline.url,
-        urlToImage: headline.urlToImage,
+    //新規ドキュメントIDを指定
+    let documetId = headline.slug
+    setDoc(doc(db, `${userId}`, `${documetId}`), {
+      author: headline.author,
+      content: headline.content,
+      description: headline.description,
+      publishedAt: headline.publishedAt,
+      slug: headline.slug,
+      title: headline.title,
+      url: headline.url,
+      urlToImage: headline.urlToImage,
     });
   },
+  bookMarkDelete({commit}:any, headline:any) {
+    let documetId = headline.slug
+    deleteDoc(doc(db, `${userId}`,`${documetId}`));
+  }
 };
 
 export const getters = {
-  user(state) {
+  user(state:any) {
     return state.user;
   },
-  isAuthenticated(state) {
+  isAuthenticated(state:any) {
     return !!state.user;
+  },
+  setTitle(state:any) {
+    return state.markTitles;
   },
 };

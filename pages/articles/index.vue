@@ -3,36 +3,50 @@
     <v-layout row wrap>
       <v-flex xs12 text-center>
         <h2>ブックマーク一覧</h2>
+        {{ this.$store.getters.setTitle }}
       </v-flex>
-      <ul>
-        <li>
-          <div>
-            <picture>
-              <img src="~/assets/img/hoge.jpg" alt="" />
-            </picture>
-          </div>
-          <div class="box">
-            <p>タイトル</p>
-            <p>
-              テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-            </p>
-          </div>
-          <div class="btn">
-            <v-btn-toggle mandatory tile color="red accent-3" group>
-             <v-btn
-              @click.prevent="hoge()">
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </div>
-        </li>
-      </ul>
-        <div
+        <!-- <div
         class="headlines__list"
         v-for="headline in marklists"
         :key="headline.id"
-      >{{headline}}</div>
-      
+      >{{headline}}</div> -->
+      <!-- {{ marklists }} -->
+      <div
+        class="headlines__list"
+        v-for="headline in marklists"
+        :key="headline.id"
+      >
+        <nuxt-link :to="`headlines/${headline.slug}`">
+          <div
+            @click.prevent="submitHeadline(headline)"
+            class="headlines__item"
+          >
+            <div v-if="headline.urlToImage !== null">
+              <span
+                :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
+              ></span>
+            </div>
+            <div v-else>
+              <img class="headlines__img" src="~/assets/img/hoge.jpg" >
+            </div>
+            <div class="headlines__item-txt">
+              <p>{{ headline.title }}</p>
+              <ul class="headlines__item-info">
+                <li>{{ headline.publishedAt }}</li>
+              </ul>
+            </div>
+          </div>
+        </nuxt-link>
+        <div
+         class="btn">
+          <v-btn-toggle tile color="red accent-3" group>
+            <v-btn
+              @click.prevent="hoge(headline)">
+              <v-icon>mdi-heart</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+      </div>
     </v-layout>
   </v-container>
 </template>
@@ -53,8 +67,8 @@ export default Vue.extend({
   },
   methods: {
     hoge() {
-      console.log(this.$store.state.user.uid)
-      this.$store.dispatch("bookMarks");
+     console.log(this.$store.getters.setTitle)
+      // this.$store.dispatch("bookMarks");
     }
   }
 });
@@ -88,5 +102,52 @@ li {
 }
 .btn {
   margin-top: auto;
+}
+
+.headlines__list {
+  display: flex;
+  justify-content: space-between;
+  &:not(:last-of-type) {
+    margin-bottom: 30px;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
+
+.headlines__item {
+  display: flex;
+
+  .headlines__img {
+    display: block;
+    width: 200px;
+    height: 150px;
+  }
+  
+  span {
+    display: block;
+    width: 200px;
+    height: 150px;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .headlines__item-txt {
+    width: 80%;
+    margin-left: 3.5%;
+    color: #333;
+    p {
+      margin-bottom: 5px;
+    }
+  }
+
+  .headlines__item-info {
+    padding: 0;
+    li {
+      margin-bottom: 0;
+      font-size: 14px;
+    }
+  }
 }
 </style>
