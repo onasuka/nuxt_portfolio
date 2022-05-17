@@ -1,19 +1,23 @@
-// import firebase from "firebase/app";
-// // import "firebase/auth";
-// // import "firebase/firestore";
+// import { initializeApp } from "firebase/app"
+import firebase from 'firebase/compat/app';
+import { initializeApp } from "firebase/app";
+import 'firebase/compat/auth'; 
 
-// const clientCredentials = {
-//     apikey: process.env.FIREBASE_API_KEY,
-//     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-//     projectId: process.env.FIREBASE_PROJECT_ID,
-//     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-//     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-//     appId: process.env.FIREBASE_APP_ID,
-//     measurementId: process.env.FIREBASE_MEASUREMENT_ID,
-// }
+const config  = {
+  apiKey: 'AIzaSyCCrjodp3GuXJoNSjst5ukSTNcPY0w7R-Y',
+  authDomain: 'english-article-adee4.firebaseapp.com',
+  projectId: "english-article-adee4",
+  storageBucket: "english-article-adee4.appspot.com",
+  messagingSenderId: "280426861108",
+  appId: "1:280426861108:web:2b18a0b0507cda9385f061",
+};
+ 
+if (!firebase.apps.length) {
+    firebase.initializeApp(config)
+    // firebase.analytics()
+}
 
-// if (!firebase.apps.length) {
-//     firebase.initializeApp(clientCredentials)
-//   }
-  
-//   export default firebase
+export const app = initializeApp(config);
+export const auth = firebase.auth
+// export const db = firebase.firestore
+export default firebase
