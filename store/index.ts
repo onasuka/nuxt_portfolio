@@ -96,6 +96,7 @@ export const actions = {
     return auth().signOut();
   },
   async bookMarks({ commit }:any) {
+    if(userId) {
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
@@ -103,7 +104,7 @@ export const actions = {
         commit("setArticle" , marksitem)
         commit("setTitle" , marksitem.title)
       });
-
+    }
   },
   bookMark({ commit }:any , headline:any) {
     //新規ドキュメントIDを指定
