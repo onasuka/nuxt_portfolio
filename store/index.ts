@@ -11,15 +11,14 @@ export * from "~/utils/store-accessor";
 
 //5/11追加分
 import { auth, app } from "~/plugins/firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { signInAnonymously } from "firebase/auth";
 import { collection, setDoc, getFirestore , doc, deleteDoc ,getDocs } from "firebase/firestore";
-import { LoaderOptionsPlugin } from "webpack";
 
 const db = getFirestore(app);
 let userId = "";
 
 auth().onAuthStateChanged(function(user) {
-  // console.log(user?.uid)
+  console.log(user?.uid)
   if (user) {
     return userId =user.uid
   }
@@ -79,12 +78,25 @@ export const actions = {
   signInWithGoogle({ commit }:any) {
     return auth().signInWithPopup(new auth.GoogleAuthProvider());
   },
+  
+  signInWithguestsLogin({ commit }:any) {
+    const getAuth = auth();
+    signInAnonymously(getAuth)
+    .then(() => {
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ...
+    });
+  },
 
   signOut({ commit }:any) {
     commit("signOut")
     return auth().signOut();
   },
   async bookMarks({ commit }:any) {
+    if(userId) {
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
@@ -92,7 +104,7 @@ export const actions = {
         commit("setArticle" , marksitem)
         commit("setTitle" , marksitem.title)
       });
-
+    }
   },
   bookMark({ commit }:any , headline:any) {
     //新規ドキュメントIDを指定

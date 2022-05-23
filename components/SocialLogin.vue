@@ -23,6 +23,16 @@
             </v-btn> -->
             <v-btn
                 block
+                class="color-guests text-capitalize mb-3"
+                @click="guestsLogin"
+            >
+                <v-icon left class="color-guests__icon" size="22">
+                    mdi-account
+                </v-icon>
+                ゲストログイン
+            </v-btn>
+            <v-btn
+                block
                 class="color-google text-capitalize mb-3"
                 @click="googleLogin"
             >
@@ -77,11 +87,8 @@
     }
 }
 
-.color-twitter {
-    @include social_button(#1da1f2);
-}
-.color-facebook {
-    @include social_button(#3b5998);
+.color-guests {
+    @include social_button(#2a74e4);
 }
 .color-google {
     @include social_button(#fff, #757575);
@@ -125,8 +132,7 @@ export default {
         //         })
         // },
         googleLogin: function(err) {
-            this.$store
-                .dispatch('signInWithGoogle')
+            this.$store.dispatch('signInWithGoogle')
                 .then(() => {
                     this.$router.push({
                         name: 'index'
@@ -136,7 +142,19 @@ export default {
                     this.$parent.socialLoginErrorMsg =
                         '現在Googleでのログインは使用できません。後ほどお試しください。'
                 })
-        }
+        },
+        guestsLogin: function(err) {
+            this.$store.dispatch('signInWithguestsLogin')
+                .then(() => {
+                    this.$router.push({
+                        name: 'index'
+                    })
+                })
+                .catch((err) => {
+                    this.$parent.socialLoginErrorMsg =
+                        '現在ゲストでのログインは使用できません。後ほどお試しください。'
+                })
+        },
     }
 }
 </script>
