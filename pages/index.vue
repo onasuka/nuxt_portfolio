@@ -36,12 +36,12 @@
         <a @click="newsCategory('technology')">テクノロジー </a>
       </v-col>
     </v-row>
-    {{selected}}
     <div>
       <div
         class="headlines__list"
-        v-for="headline in viewLists"
-        :key="headline.id"
+        v-for="(headline, index) in viewLists"
+        :key="index"
+        :id="index"
       >
         <nuxt-link :to="`headlines/${headline.slug}`">
           <div
@@ -59,7 +59,6 @@
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
               {{ headline.slug }}
-              {{ selected }}
               <ul class="headlines__item-info">
                 <li>{{ headline.source.name }}</li>
                 <li>{{ headline.publishedAt }}</li>
@@ -70,11 +69,18 @@
         <div
          class="btn">
           <v-btn-toggle
-            v-model="selected"
-            tile color="red accent-3" group>
+            tile group>
             <v-btn
+              v-if="bookMarkIcon"
+              class="red--text text--accent-3"
               :value="headline.slug"
-              @click.prevent="favorite(headline)">
+              @click.prevent="favoriteDelete(headline,index)">
+              <v-icon>mdi-heart</v-icon>
+            </v-btn>
+            <v-btn
+              v-else
+              :value="headline.slug"
+              @click.prevent="favorite(headline,index)">
               <v-icon>mdi-heart</v-icon>
             </v-btn>
           </v-btn-toggle>
@@ -100,7 +106,7 @@ export default {
       viewLists: [],
       pageSize: 10,
       bookMarkTitle:[],
-      selected:undefined
+      bookMarkIcon:false
     };
   },
   
@@ -116,14 +122,6 @@ export default {
     filterPages() {
       return this.$store.getters["headlines/headlines"];
     },
-    // bookMarkWach() {
-    //   return this.$store.getters["setTitle"];
-    // },
-    selected:{
-      set(x){
-        this.$emit("change", x)
-      },
-    }
   },
   methods: {
     submitHeadline(headline: any) {
@@ -149,21 +147,17 @@ export default {
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
-    favorite(headline:any) {
-      let bookMarkTitle = this.$store.getters.setTitle;
-      
-      // console.log(bookMarkTitle);
-      // console.log(headline.title);
-      if( bookMarkTitle.includes(headline.title) ) {
-        this.$store.dispatch('bookMarkDelete',headline)
-        this.bookMarkTitle =  this.$store.getters.setTitle
-        console.log("あるよ")
-      } else {
-        this.$store.dispatch('bookMark',headline)
-        this.bookMarkTitle =  this.$store.getters.setTitle
-        console.log("ないよ")
-      }
+    favorite(headline:any,id:any) {
+        this.bookMarkIcon = true
+        console.log(this.bookMarkIcon)
+        // this.$store.dispatch('bookMark',headline)
+        // this.bookMarkTitle =  this.$store.getters.setTitle
     },
+    favoriteDelete(headline:any,id:any) {
+      this.bookMarkIcon = false
+      // this.$store.dispatch('bookMarkDelete',headline)
+      // this.bookMarkTitle =  this.$store.getters.setTitle
+    }
   },
   mounted: function(){
     this.length = Math.ceil(this.lists.length/this.pageSize);
@@ -179,9 +173,6 @@ export default {
       this.viewLists = this.lists.slice(0,this.pageSize);
       this.page = 1;
     },
-    // bookMarkWach(){
-    //   this.bookMarkTitle = this.$store.getters.setTitle
-    // }
   }
 };
 </script>
