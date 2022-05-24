@@ -11,7 +11,7 @@ export * from "~/utils/store-accessor";
 
 //5/11追加分
 import { auth, app } from "~/plugins/firebase";
-import { signInAnonymously } from "firebase/auth";
+import { signInAnonymously , getAuth , updateEmail ,EmailAuthProvider } from "firebase/auth";
 import { collection, setDoc, getFirestore , doc, deleteDoc ,getDocs } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -31,6 +31,10 @@ export const state = () => ({
   loggedIn: false,
   marklists:[],
   markTitles: [],
+  profile: {
+    name: "ゲスト",
+    email: ""
+  }
 });
 
 export const mutations = {
@@ -55,6 +59,11 @@ export const mutations = {
   },
   signOut(state) {
     state.markTitles = []
+  },
+  setProfile(state, name, email) {
+    console.log(name)
+    state.profile.name = name
+    state.profile.email = email
   }
 };
 
@@ -65,14 +74,6 @@ export const actions = {
 
   signInWithEmail({ commit }:any, { email, password }:any) {
     return auth().signInWithEmailAndPassword(email, password);
-  },
-
-  signInWithTwitter({ commit }:any) {
-    return auth().signInWithPopup(new auth.TwitterAuthProvider());
-  },
-
-  signInWithFacebook({ commit }:any) {
-    return auth().signInWithPopup(new auth.FacebookAuthProvider());
   },
 
   signInWithGoogle({ commit }:any) {
@@ -123,7 +124,38 @@ export const actions = {
   bookMarkDelete({commit}:any, headline:any) {
     let documetId = headline.slug
     deleteDoc(doc(db, `${userId}`,`${documetId}`));
-  }
+  },
+  userDateUp({commit},email) {
+    console.log(email.state.user.email)
+    let userEmail = email.state.user.email
+    let userName = userEmail.substr(0, userEmail.indexOf("@"));
+    setDoc(doc(db, "users", `${userId}`), {
+      name: userName,
+      email: userEmail,
+    });
+    commit("setProfile" , userEmail,userName)
+  },
+  saveProfile({commit}:any, user:any) {
+    const washingtonRef = doc(db, "users",  `${userId}`);
+    setDoc(washingtonRef, {
+      name: user.name,
+      email: user.email
+    });
+    commit("setProfile" , user.name,user.email)
+  },
+  async saveEmail({commit}:any, userData:any) {
+    const user = getAuth().currentUser;
+    try {
+      const credential = await EmailAuthProvider.credential(
+        user?.email ?? '', 
+        password
+      )
+      user && (await updateEmail(user, credential))
+      //メールアドレス、パスワードリセットの処理
+    } catch (e) {
+      console.log(e)
+    }
+  },
 };
 
 export const getters = {

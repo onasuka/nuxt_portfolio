@@ -239,6 +239,7 @@ export default {
                                     'アカウントの登録が完了しました。'
                             }
                         })
+                        this.$store.dispatch('userDateUp',{email: this.register_email})
                         this.$store.commit('login')
                     })
                     .catch((err) => {
