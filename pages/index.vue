@@ -36,7 +36,6 @@
         <a @click="newsCategory('technology')">テクノロジー </a>
       </v-col>
     </v-row>
-    {{selected}}
     <div>
       <div
         class="headlines__list"
@@ -59,7 +58,6 @@
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
               {{ headline.slug }}
-              {{ selected }}
               <ul class="headlines__item-info">
                 <li>{{ headline.source.name }}</li>
                 <li>{{ headline.publishedAt }}</li>
@@ -70,7 +68,6 @@
         <div
          class="btn">
           <v-btn-toggle
-            v-model="selected"
             tile color="red accent-3" group>
             <v-btn
               :value="headline.slug"
@@ -100,7 +97,6 @@ export default {
       viewLists: [],
       pageSize: 10,
       bookMarkTitle:[],
-      selected:undefined
     };
   },
   
@@ -119,11 +115,6 @@ export default {
     // bookMarkWach() {
     //   return this.$store.getters["setTitle"];
     // },
-    selected:{
-      set(x){
-        this.$emit("change", x)
-      },
-    }
   },
   methods: {
     submitHeadline(headline: any) {

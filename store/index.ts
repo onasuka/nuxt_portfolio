@@ -10,9 +10,11 @@ export const plugins = [initializer];
 export * from "~/utils/store-accessor";
 
 //5/11追加分
+import { v4 as uuidv4 } from 'uuid';
 import { auth, app } from "~/plugins/firebase";
-import { signInAnonymously , getAuth , updateEmail ,EmailAuthProvider } from "firebase/auth";
-import { collection, setDoc, getFirestore , doc, deleteDoc ,getDocs } from "firebase/firestore";
+import { EmailAuthProvider, getAuth, reauthenticateWithCredential, signInAnonymously, updateEmail, updatePassword } from "firebase/auth";
+import { collection, setDoc, getFirestore , doc, deleteDoc ,getDocs,updateDoc } from "firebase/firestore";
+
 
 const db = getFirestore(app);
 let userId = "";
@@ -33,8 +35,11 @@ export const state = () => ({
   markTitles: [],
   profile: {
     name: "ゲスト",
+    // email: "fahsfjah@gmail.com"
     email: ""
-  }
+  },
+  wordList: [],
+  wordNames : []
 });
 
 export const mutations = {
@@ -60,11 +65,27 @@ export const mutations = {
   signOut(state) {
     state.markTitles = []
   },
+
   setProfile(state, name, email) {
     console.log(name)
     state.profile.name = name
     state.profile.email = email
-  }
+  },
+
+  setWordItem(state:any,payload:any) {
+    let wordItem = state.wordList
+    let wordPieces = wordItem.length
+    // console.log(wordPieces)
+    // for(let i = 0; i < wordPieces; i++) {
+    //   if( wordItem[i].word.includes(payload.word) ) {
+    //     console.log("AA")
+    //   }
+    // }
+    wordItem.push(payload)
+    // console.log(wordItem)
+    // console.log(state.marklists)
+  },
+
 };
 
 export const actions = {
@@ -125,6 +146,7 @@ export const actions = {
     let documetId = headline.slug
     deleteDoc(doc(db, `${userId}`,`${documetId}`));
   },
+
   userDateUp({commit},email) {
     console.log(email.state.user.email)
     let userEmail = email.state.user.email
@@ -135,6 +157,7 @@ export const actions = {
     });
     commit("setProfile" , userEmail,userName)
   },
+  
   saveProfile({commit}:any, user:any) {
     const washingtonRef = doc(db, "users",  `${userId}`);
     setDoc(washingtonRef, {
@@ -143,18 +166,94 @@ export const actions = {
     });
     commit("setProfile" , user.name,user.email)
   },
-  async saveEmail({commit}:any, userData:any) {
-    const user = getAuth().currentUser;
-    try {
-      const credential = await EmailAuthProvider.credential(
-        user?.email ?? '', 
-        password
-      )
-      user && (await updateEmail(user, credential))
-      //メールアドレス、パスワードリセットの処理
-    } catch (e) {
-      console.log(e)
+
+  async saveEmail({commit}:any, { newEmail, password }:{newEmail:string, password: string}) {
+    const auth = getAuth();
+    const user = auth.currentUser;    
+    console.log(newEmail)
+    // const credential = promptForCredentials();
+    const credential = EmailAuthProvider.credential(
+      user?.email ?? "",
+      password
+    )
+    user && await reauthenticateWithCredential(user, credential).then(() => {
+      // User re-authenticated.
+      updateEmail(user, newEmail).then(() => {
+        // Email updated!
+        // ...
+        console.log("通った")
+
+      }).catch((error) => {
+        // An error occurred
+        // ...
+      });
+    }).catch((error) => {
+      // An error ocurred
+      console.log("通ってない")
+      console.log(error)
+      // ...
+    });
+  },
+  async savePassword({commit}:any, { password, newPassword }:{password:string, newPassword: string}) {
+    const auth = getAuth();
+    const user = auth.currentUser;    
+    console.log(password)
+    // const credential = promptForCredentials();
+    const credential = EmailAuthProvider.credential(
+      user?.email ?? "",
+      password
+    )
+    user && await reauthenticateWithCredential(user, credential).then(() => {
+      // User re-authenticated.
+      updatePassword(user, newPassword).then(() => {
+        // Update successful.
+        console.log("通った")
+
+      }).catch((error) => {
+        // An error occurred
+        // ...
+      });
+    }).catch((error) => {
+      // An error ocurred
+      console.log("通ってない")
+      console.log(error)
+      // ...
+    });
+  },
+
+  addWord({commit}:any, wordItem:any) {
+  //ランダムIDを生成
+    let slug = uuidv4(wordItem.word);
+    setDoc(doc(db, "user",`${userId}`,"word",`${slug}`), {
+      word: wordItem.word,
+      meaning: wordItem.meaning,
+      isEditing: false,
+      slug:slug
+    });
+    // commit("setWordItem" , wordItem)
+  },
+  async wordList({ commit }:any) {
+    if(userId) {
+      const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"word"));
+      // console.log(querySnapshot.docs)
+      querySnapshot.forEach((doc) => {
+        let wordItem = doc.data()
+        commit("setWordItem" , wordItem)
+      });
     }
+  },
+  saveWord({ commit }:any,changeWord:any) {
+    const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.slug}`);
+    // console.log(changeWord.state.wordList[0])
+    console.log(changeWord)
+    updateDoc(washingtonRef, {
+      word: changeWord.word,
+      meaning: changeWord.meaning,
+    });
+  },
+  removeWord({commit}:any, removeWord:any) {
+    const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.slug}`);
+    deleteDoc(removeRef);
   },
 };
 
@@ -168,4 +267,7 @@ export const getters = {
   setTitle(state:any) {
     return state.markTitles;
   },
+  wordList(state:any) {
+    return state.wordList
+  }
 };
