@@ -81,14 +81,20 @@
           <v-btn block class="mb-2" color="info" @click="edit"
             >プロフィールを編集</v-btn
           >
-          <v-btn block class="mb-2" color="info"
-            >新しいパスワードに変更する</v-btn
+          <v-btn 
+           block
+           class="mb-2"
+           color="info"
+          @click="isPassword"
+          >新しいパスワードに変更する</v-btn
           >
           <v-btn block class="mb-2" color="error" @click="signOut"
             >ログアウト</v-btn
           >
         </v-card-text>
-        <div class="password">
+        <div 
+          class="password"
+          v-show="isPasswordBox">
           <v-card class="password__box">
             <v-form
               class="py-8 px-5"
@@ -138,7 +144,10 @@
                  :disabled="!changeValid"
                  type="submit"
                  > 保存 </v-btn>
-                <v-btn class="white--text" color="red" @click="edit">
+                <v-btn
+                 class="white--text"
+                 color="red"
+                 @click="isPassword">
                   キャンセル
                 </v-btn>
               </div>
@@ -162,6 +171,7 @@ export default Vue.extend({
       showPassword: false,
       editProfile: false,
       changeValid: true,
+      isPasswordBox: false,
       profile: {
         name: this.$store.state.profile.name,
         email: this.$store.state.profile.email,
@@ -248,6 +258,9 @@ export default Vue.extend({
       let newPassword = this.changePassword
       this.$store.dispatch("savePassword", { password, newPassword });
     },
+    isPassword() {
+       this.isPasswordBox == true ? this.isPasswordBox = false : this.isPasswordBox = true
+    }
   },
 });
 </script>
