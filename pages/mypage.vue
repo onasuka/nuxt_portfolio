@@ -2,10 +2,6 @@
   <v-container>
     <v-row wrap justify="center" align="center">
       <v-col :sm="12" :md="8">
-        <!-- <div
-          class="profile_img">
-          <img src="~/assets/img/hoge.jpg" >
-        </div> -->
         <div class="password" v-show="isVisible">
           <v-card class="password__box">
             <v-form class="pa-5" @submit.prevent="saveEmail(password)">
@@ -47,6 +43,7 @@
               label="アカウント名"
             ></v-text-field>
             <v-text-field
+              v-if="profile.email"
               class="mt-0 pt-0"
               :rules="emailRules"
               required
@@ -73,8 +70,10 @@
         <div v-else class="pa-6 text-center">
           <small>アカウント名</small>
           <p class="mb-0 mb-3">{{ profile.name }}</p>
-          <small>Email</small>
-          <p class="mb-0">{{ profile.email }}</p>
+          <div v-if="profile.email">
+            <small>Email</small>
+            <p class="mb-0">{{ profile.email }}</p>
+          </div>
         </div>
         <v-divider></v-divider>
         <v-card-text>
@@ -83,6 +82,7 @@
           >
           <v-btn 
            block
+           v-if="profile.email"
            class="mb-2"
            color="info"
           @click="isPassword"
@@ -207,7 +207,6 @@ export default Vue.extend({
       ]
     };
   },
-
   methods: {
     edit() {
       this.editProfile == true
@@ -244,8 +243,8 @@ export default Vue.extend({
           console.log("過去：" + userEmail);
           console.log("変わったよ");
           this.isVisible = true;
-          // this.$store.dispatch('saveProfile',{name: this.profile.name, email: this.profile.email})
         }
+        this.$store.dispatch('saveProfile',{name: this.profile.name})
       }
     },
     saveEmail(password) {

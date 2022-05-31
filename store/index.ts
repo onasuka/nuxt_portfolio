@@ -35,7 +35,6 @@ export const state = () => ({
   markTitles: [],
   profile: {
     name: "ゲスト",
-    // email: "fahsfjah@gmail.com"
     email: ""
   },
   wordList: [],
@@ -66,10 +65,14 @@ export const mutations = {
     state.markTitles = []
   },
 
-  setProfile(state, name, email) {
-    console.log(name)
-    state.profile.name = name
-    state.profile.email = email
+  setProfile(state, user) {
+    if(user) {
+      state.profile.name = user.name
+      state.profile.email = user.email
+    } else {
+      state.profile.name = "ゲスト"
+      state.profile.email = ""
+    }
   },
 
   setWordItem(state:any,payload:any) {
@@ -115,12 +118,13 @@ export const actions = {
 
   signOut({ commit }:any) {
     commit("signOut")
+    commit("setProfile")
     return auth().signOut();
   },
   async bookMarks({ commit }:any) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, `${userId}`));
-      console.log(querySnapshot.docs)
+      // console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
         let marksitem = doc.data()
         commit("setArticle" , marksitem)
@@ -147,26 +151,25 @@ export const actions = {
     deleteDoc(doc(db, `${userId}`,`${documetId}`));
   },
 
-  userDateUp({commit},email) {
-    console.log(email.state.user.email)
-    let userEmail = email.state.user.email
+  userDateUp({commit},user) {
+    // console.log(user.email)
+    let userEmail = user.email
     let userName = userEmail.substr(0, userEmail.indexOf("@"));
-    setDoc(doc(db, "users", `${userId}`), {
+    setDoc(doc(db, "profile", `${userId}`), {
       name: userName,
       email: userEmail,
     });
-    commit("setProfile" , userEmail,userName)
+    commit("setProfile" , {name:userName,email:userEmail})
   },
   
   saveProfile({commit}:any, user:any) {
-    const washingtonRef = doc(db, "users",  `${userId}`);
+    const washingtonRef = doc(db, "profile",  `${userId}`);
     setDoc(washingtonRef, {
       name: user.name,
-      email: user.email
-    });
-    commit("setProfile" , user.name,user.email)
+    }, {merge: true});
+    console.log(user.name)
+    commit("setProfile" , user.name)
   },
-
   async saveEmail({commit}:any, { newEmail, password }:{newEmail:string, password: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
