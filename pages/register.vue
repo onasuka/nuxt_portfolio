@@ -252,7 +252,8 @@ export default {
                             this.registerErrorMsg =
                                 'エラーにより登録できませんでした。'
                         }
-                    })
+                    }) 
+               this.$store.dispatch('userDateUp',{email: this.register_email})
             }
         }
     }
