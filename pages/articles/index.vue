@@ -3,7 +3,6 @@
     <v-layout row wrap>
       <v-flex xs12 text-center>
         <h2>ブックマーク一覧</h2>
-        {{ this.act }}
       </v-flex>
       <div
         class="headlines__list"

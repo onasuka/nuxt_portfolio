@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <p class="word__ttl">英単語一覧</p>
-    <v-dialog v-model="dialog" width="500">
+    <!-- <v-dialog v-model="dialog" width="500">
       <template v-slot:activator="{ on, attrs }">
         <div class="text-right">
           <v-btn color="blue" dark v-bind="attrs" v-on="on"> 単語登録 </v-btn>
@@ -22,7 +22,8 @@
           <v-btn color="primary" @click="addWord()" block> 保存 </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
+    {{this.testQuestion}}
     <div v-for="(wordItem, index) in wordList" :key="index" class="word__box">
       <div
         class="pt-2 d-flex justify-space-between align-end"
@@ -34,15 +35,52 @@
           <small>意味・メモ帳</small>
           <p class="mt-0">{{ wordItem.meaning }}</p>
         </div>
-        <v-card-actions>
-          <v-btn icon @click="edit(index)">
-            <v-icon>mdi-border-color</v-icon>
-          </v-btn>
+        <div>
+          <v-dialog v-model="dialog" width="500">
+            <template v-slot:activator="{ on, attrsQuestion }">
+              <div class="text-right">
+                <v-btn 
+                v-if = "testQuestion[index]"
+                color="red" dark v-bind="attrsQuestion" 
+                @click="removeQuestion(index)">
+                  問題削除
+                </v-btn>
+                <v-btn
+                v-else
+                 color="blue" dark v-bind="attrsQuestion" v-on="on">
+                  問題追加
+                </v-btn>
+              </div>
+            </template>
+            <v-card class="pa-5">
+              <p class="word__ttl">問題追加</p>
+              <v-text-field
+                label="英単語"
+                v-model="wordItem.word"
+              ></v-text-field>
+              <v-textarea
+                label="意味"
+                v-model="wordItem.meaning"
+                auto-grow
+                class="pa-0"
+                rows="2"
+              ></v-textarea>
+              <v-card-actions class="pa-0">
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="questionAdd()" block> 保存 </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-card-actions>
+            <v-btn icon @click="edit(index)">
+              <v-icon>mdi-border-color</v-icon>
+            </v-btn>
 
-          <v-btn icon @click="removeWord(index)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-card-actions>
+            <v-btn icon @click="removeWord(index)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </div>
       </div>
       <v-form
         class="py-2 d-flex justify-space-between align-end"
@@ -86,9 +124,14 @@ export default defineComponent({
     newMeaning: "",
     dialog: false,
     wordList: [],
+    wordQuestion: "",
+    meaningQuestion: "",
+    questionBox: false,
+    testQuestion: []
   }),
   async asyncData({ store }: any) {
     let items = await store.dispatch("wordList");
+    let questionItem = await store.dispatch("questionList");
     return {
       wordList: store.state.wordList,
     };
@@ -127,6 +170,37 @@ export default defineComponent({
       console.log(this.wordList[index]);
       this.$store.dispatch("removeWord", this.wordList[index]);
     },
+    questionAdd() {
+      if(this.wordQuestion == "" || this.meaningQuestion == "") return;
+      this.$store.dispatch("questionAdd", {
+        word: this.wordQuestion,
+        meaning: this.meaningQuestion,
+      });
+      this.wordQuestion = "";
+      this.meaningQuestion = "";
+      this.questionBox = false;
+    },
+    removeQuestion(index: number) {
+      console.log(this.wordList[index]);
+      this.$store.dispatch("removeQuestion", this.wordList[index]);
+    },
+  },
+  mounted() {
+    let questionWords =  this.$store.getters.questionWord
+    let headlines = this.wordList
+    console.log(headlines.length)
+    for (let i = 0; i < headlines.length; i++) {
+      let headlineTitle = headlines[i].word
+      // console.log(headlineTitle)
+      // console.log(questionWords)
+      let act = this.testQuestion
+      questionWords.filter(function(value :string) {
+        if( value === headlineTitle) {
+          act[i] =  true
+          console.log("あったよ")
+        }
+      })
+    }
   },
   watch: {
     watchWord() {
