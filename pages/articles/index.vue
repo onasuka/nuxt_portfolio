@@ -3,18 +3,12 @@
     <v-layout row wrap>
       <v-flex xs12 text-center>
         <h2>ブックマーク一覧</h2>
-        {{ this.$store.getters.setTitle }}
+        {{ this.act }}
       </v-flex>
-        <!-- <div
-        class="headlines__list"
-        v-for="headline in marklists"
-        :key="headline.id"
-      >{{headline}}</div> -->
-      <!-- {{ marklists }} -->
       <div
         class="headlines__list"
-        v-for="headline in marklists"
-        :key="headline.id"
+        v-for="(headline, index) in marklists"
+        :key="index"
       >
         <nuxt-link :to="`headlines/${headline.slug}`">
           <div
@@ -27,7 +21,7 @@
               ></span>
             </div>
             <div v-else>
-              <img class="headlines__img" src="~/assets/img/hoge.jpg" >
+              <img class="headlines__img" src="~/assets/img/hoge.jpg" />
             </div>
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
@@ -37,14 +31,22 @@
             </div>
           </div>
         </nuxt-link>
-        <div
-         class="btn">
-          <v-btn-toggle tile color="red accent-3" group>
-            <v-btn
-              @click.prevent="hoge(headline)">
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-          </v-btn-toggle>
+        <div class="btn">
+          <v-btn
+            v-if = "act[index]"
+            icon
+            :value="headline.slug"
+            @click.prevent="favorite(headline,index)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
+          <v-btn
+            v-else
+            icon
+            :value="headline.slug"
+            class="red--text text--accent-3"
+            @click.prevent="favoriteDelete(headline,index)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
         </div>
       </div>
     </v-layout>
@@ -57,26 +59,35 @@ export default Vue.extend({
   data() {
     return {
       marklists: [],
+      act: [],
     };
   },
-  async asyncData({ store }:any) {
+  async asyncData({ store }: any) {
     let items = await store.dispatch("bookMarks");
-    return{
-      marklists : store.state.marklists
-    }
+    return {
+      marklists: store.state.marklists,
+    };
   },
   methods: {
-    hoge() {
-     console.log(this.$store.getters.setTitle)
-      // this.$store.dispatch("bookMarks");
+    favorite(headline:any,id:any) {
+        this.$set(this.act, id, false);
+        this.$store.dispatch('bookMark',headline)
+    },
+    favoriteDelete(headline:any,id:any) {
+      this.$set(this.act, id, true);
+      this.$store.dispatch('bookMarkDelete',headline)
     }
-  }
+  },
 });
 </script>
 
 <style lang="scss" scoped>
+.buttoncolor {
+  background-color: green !important;
+}
 h2 {
   font-size: 2rem;
+  margin: 15px 0;
 }
 li {
   display: flex;
@@ -105,6 +116,7 @@ li {
 }
 
 .headlines__list {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   &:not(:last-of-type) {
@@ -124,7 +136,7 @@ li {
     width: 200px;
     height: 150px;
   }
-  
+
   span {
     display: block;
     width: 200px;

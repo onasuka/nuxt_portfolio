@@ -11,8 +11,8 @@
         </v-text-field>
       </v-col>
     </v-row>
-    <!-- {{ this.bookMarkTitle }} -->
-    {{  this.$store.getters.setTitle }}
+    <!-- {{ this.viewLists[0].title }} -->
+    <!-- {{  this.$store.getters.setTitle }} -->
     <v-row class="menu-list">
       <v-col md="2" class="menu-item">
         <a @click="newsCategory('')">すべて</a>
@@ -36,12 +36,12 @@
         <a @click="newsCategory('technology')">テクノロジー </a>
       </v-col>
     </v-row>
-    {{selected}}
     <div>
       <div
         class="headlines__list"
-        v-for="headline in viewLists"
-        :key="headline.id"
+        v-for="(headline, index) in viewLists"
+        :key="index"
+        :id="index"
       >
         <nuxt-link :to="`headlines/${headline.slug}`">
           <div
@@ -59,7 +59,6 @@
             <div class="headlines__item-txt">
               <p>{{ headline.title }}</p>
               {{ headline.slug }}
-              {{ selected }}
               <ul class="headlines__item-info">
                 <li>{{ headline.source.name }}</li>
                 <li>{{ headline.publishedAt }}</li>
@@ -69,15 +68,21 @@
         </nuxt-link>
         <div
          class="btn">
-          <v-btn-toggle
-            v-model="selected"
-            tile color="red accent-3" group>
-            <v-btn
-              :value="headline.slug"
-              @click.prevent="favorite(headline)">
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-          </v-btn-toggle>
+          <v-btn
+            v-if = "act[index]"
+            icon
+            class="red--text text--accent-3"
+            :value="headline.slug"
+            @click.prevent="favoriteDelete(headline,index)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
+          <v-btn
+            v-else
+            icon
+            :value="headline.slug"
+            @click.prevent="favorite(headline,index)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
         </div>
       </div>
     </div>
@@ -90,6 +95,7 @@
 </template>
 
 <script lang="ts">
+import func from 'vue-editor-bridge';
 export default {
   data() {
     return {
@@ -100,7 +106,7 @@ export default {
       viewLists: [],
       pageSize: 10,
       bookMarkTitle:[],
-      selected:undefined
+      act:[],
     };
   },
   
@@ -116,14 +122,6 @@ export default {
     filterPages() {
       return this.$store.getters["headlines/headlines"];
     },
-    // bookMarkWach() {
-    //   return this.$store.getters["setTitle"];
-    // },
-    selected:{
-      set(x){
-        this.$emit("change", x)
-      },
-    }
   },
   methods: {
     submitHeadline(headline: any) {
@@ -149,28 +147,34 @@ export default {
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
-    favorite(headline:any) {
-      let bookMarkTitle = this.$store.getters.setTitle;
-      
-      // console.log(bookMarkTitle);
-      // console.log(headline.title);
-      if( bookMarkTitle.includes(headline.title) ) {
-        this.$store.dispatch('bookMarkDelete',headline)
-        this.bookMarkTitle =  this.$store.getters.setTitle
-        console.log("あるよ")
-      } else {
+    favorite(headline:any,id:any) {
+        this.$set(this.act, id, true);
         this.$store.dispatch('bookMark',headline)
-        this.bookMarkTitle =  this.$store.getters.setTitle
-        console.log("ないよ")
-      }
+        // this.bookMarkTitle =  this.$store.getters.setTitle
     },
+    favoriteDelete(headline:any,id:any) {
+      this.$set(this.act, id, false);
+      this.$store.dispatch('bookMarkDelete',headline)
+      // this.bookMarkTitle =  this.$store.getters.setTitle
+    }
   },
-  mounted: function(){
+  mounted(){
     this.length = Math.ceil(this.lists.length/this.pageSize);
     // listsの個数(30)/1ページで見れる数(10) ページ数を決める
-
     this.viewLists = this.lists.slice(0,this.pageSize);
     //受け取ったすべてのデータが格納されているlistsから、0からthis.pageSize(10)までをthis.viewListsに格納する どこからどこまでを表示するか決める
+    let bookMarksTitle =  this.$store.getters.setTitle
+    let headlines = this.viewLists
+    console.log(headlines.length)
+    for (let i = 0; i < headlines.length; i++) {
+      let headlineTitle = headlines[i].title
+      let act = this.act
+      bookMarksTitle.filter(function(value :string) {
+        if( value === headlineTitle) {
+          act[i] =  true
+        }
+      })
+    }
   },
   watch: {
     filterPages(){
@@ -179,9 +183,6 @@ export default {
       this.viewLists = this.lists.slice(0,this.pageSize);
       this.page = 1;
     },
-    // bookMarkWach(){
-    //   this.bookMarkTitle = this.$store.getters.setTitle
-    // }
   }
 };
 </script>
