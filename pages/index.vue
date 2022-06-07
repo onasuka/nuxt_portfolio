@@ -11,8 +11,8 @@
         </v-text-field>
       </v-col>
     </v-row>
-    <!-- {{ this.bookMarkTitle }} -->
-    {{  this.$store.getters.setTitle }}
+    <!-- {{ this.viewLists[0].title }} -->
+    <!-- {{  this.$store.getters.setTitle }} -->
     <v-row class="menu-list">
       <v-col md="2" class="menu-item">
         <a @click="newsCategory('')">すべて</a>
@@ -68,22 +68,21 @@
         </nuxt-link>
         <div
          class="btn">
-          <v-btn-toggle
-            tile group>
-            <v-btn
-              v-if="bookMarkIcon"
-              class="red--text text--accent-3"
-              :value="headline.slug"
-              @click.prevent="favoriteDelete(headline,index)">
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-            <v-btn
-              v-else
-              :value="headline.slug"
-              @click.prevent="favorite(headline,index)">
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-          </v-btn-toggle>
+          <v-btn
+            v-if = "act[index]"
+            icon
+            class="red--text text--accent-3"
+            :value="headline.slug"
+            @click.prevent="favoriteDelete(headline,index)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
+          <v-btn
+            v-else
+            icon
+            :value="headline.slug"
+            @click.prevent="favorite(headline,index)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
         </div>
       </div>
     </div>
@@ -96,6 +95,7 @@
 </template>
 
 <script lang="ts">
+import func from 'vue-editor-bridge';
 export default {
   data() {
     return {
@@ -106,7 +106,7 @@ export default {
       viewLists: [],
       pageSize: 10,
       bookMarkTitle:[],
-      bookMarkIcon:false
+      act:[],
     };
   },
   
@@ -148,23 +148,33 @@ export default {
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
     favorite(headline:any,id:any) {
-        this.bookMarkIcon = true
-        console.log(this.bookMarkIcon)
-        // this.$store.dispatch('bookMark',headline)
+        this.$set(this.act, id, true);
+        this.$store.dispatch('bookMark',headline)
         // this.bookMarkTitle =  this.$store.getters.setTitle
     },
     favoriteDelete(headline:any,id:any) {
-      this.bookMarkIcon = false
-      // this.$store.dispatch('bookMarkDelete',headline)
+      this.$set(this.act, id, false);
+      this.$store.dispatch('bookMarkDelete',headline)
       // this.bookMarkTitle =  this.$store.getters.setTitle
     }
   },
-  mounted: function(){
+  mounted(){
     this.length = Math.ceil(this.lists.length/this.pageSize);
     // listsの個数(30)/1ページで見れる数(10) ページ数を決める
-
     this.viewLists = this.lists.slice(0,this.pageSize);
     //受け取ったすべてのデータが格納されているlistsから、0からthis.pageSize(10)までをthis.viewListsに格納する どこからどこまでを表示するか決める
+    let bookMarksTitle =  this.$store.getters.setTitle
+    let headlines = this.viewLists
+    console.log(headlines.length)
+    for (let i = 0; i < headlines.length; i++) {
+      let headlineTitle = headlines[i].title
+      let act = this.act
+      bookMarksTitle.filter(function(value :string) {
+        if( value === headlineTitle) {
+          act[i] =  true
+        }
+      })
+    }
   },
   watch: {
     filterPages(){
