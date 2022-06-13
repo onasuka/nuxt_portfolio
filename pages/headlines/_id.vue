@@ -2,13 +2,13 @@
   <div class="article">
     <div class="article_box">
       <div class="info_cat">
-        <p class="genre">ジャンル：{{ headline.source.name }}</p>
-        <p class="day">{{ headline.publishedAt }}</p>
+        <p class="genre">ジャンル：{{ article.source.name }}</p>
+        <p class="day">{{ article.publishedAt }}</p>
       </div>
       <div>
         <div>
           <div class="heading_box">
-            <h2 class="heading">{{ headline.title }}</h2>
+            <h2 class="heading">{{ article.title }}</h2>
             <div class="btn">
               <v-btn-toggle tile color="red accent-3" group>
                 <v-btn>
@@ -17,7 +17,7 @@
               </v-btn-toggle>
             </div>
           </div>
-          <img :src="headline.urlToImage" />
+          <img :src="article.urlToImage" />
           <p
             class="text"
             v-bind:class="[
@@ -30,17 +30,17 @@
               },
             ]"
           >
-            {{ headline.description }}
+            {{ article.description }}
             <br>
-            <a :href="headline.url" target="_blank">
+            <a :href="article.url" target="_blank">
               Complete Article
             </a>
           </p>
         </div>
       </div>
     </div>
-
-    <div class="dial">
+  <articleSetting />
+    <!-- <div class="dial">
       <v-speed-dial
         v-model="fab"
         :direction="direction"
@@ -53,9 +53,6 @@
             <v-icon v-else> mdi-dots-horizontal </v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark small color="cyan" @click="WordsShowBtn">
-          <v-icon>mdi-comment-text-outline</v-icon>
-        </v-btn>
         <v-btn fab dark small color="green" @click="iframeBtn">
           <span>翻<br />訳</span>
         </v-btn>
@@ -122,179 +119,74 @@
         class="iframe__btn">
           <v-icon> mdi-close </v-icon>
       </v-btn>
-    </div>
+    </div> -->
 
-    <v-card class="pa-md-4" v-show="WordsShow">
-      <div class="mb-5">
-        <p class="word__ttl">英単語一覧</p>
-        <v-text-field label="保存したい英単語" v-model="newWord"></v-text-field>
-        <v-text-field label="意味・メモ帳" v-model="newMeaning" class="pa-0"></v-text-field>
-        <v-card-actions class="pa-0">
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            @click="add()"
-          >
-            保存
-          </v-btn>
-        </v-card-actions>
-      </div>
-      <div 
-        v-for="(wordData, index) in wordsData"
-        :key="index"
-        class="word__box">
-        <div class="pt-2 d-flex justify-space-between align-end" v-if="!wordData.isEditing">
-          <div>
-            <small>英単語</small>
-            <p class="mb-0">{{ wordData.word }}</p>
-            <small>意味・メモ帳</small>
-            <p class="mt-0">{{ wordData.meaning }}</p>
-          </div>
-          <v-card-actions>
-            <v-btn icon @click="edit(index)">
-              <v-icon>mdi-border-color</v-icon>
-            </v-btn>
-
-            <v-btn icon @click="remove(index)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </div>
-        <v-form 
-          class="py-2 d-flex justify-space-between align-end" 
-          v-if="wordData.isEditing" 
-          @submit.prevent="editTask(index, wordData)">
-          <div>
-            <small>英単語</small>
-            <input class="d-block" type="text" v-model="wordData.word" :ref="wordData.id">
-            <small>意味・メモ帳</small>
-            <input class="d-block" type="text" v-model="wordData.meaning" :ref="wordData.id">
-          </div>
-          
-          <div>
-            <v-btn
-              color="primary"
-              @click="change(index)"
-            >
-              保存
-            </v-btn>
-            <v-btn
-              class="white--text"
-              color="red"
-              @click="edit(index)"
-            >
-              キャンセル
-            </v-btn>
-          </div>
-        </v-form >
-      </div>
-    </v-card>
   </div>
 </template>
 
 <script lang="ts">
+import articleSetting from '~/components/article/articleSetting.vue'
 import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
-  data: () => ({
-    direction: "top",
-    fab: false,
-    fontSetting: false,
-    iframeShow: false,
-    WordsShow: false,
-    fling: false,
-    hover: false,
-    tabs: null,
-    transition: "slide-y-reverse-transition",
-    sizeType: "",
-    alignType: "",
-    isItalicToggle: false,
-    isBoldToggle: false,
-    isUnderLineToggle: false,
-    newWord: "",
-    newMeaning: "",
-    wordsData: [
-      {
-        word: "deleate",
-        meaning: "削除",
-        isEditing: false
-      },
-      {
-        word: "significance",
-        meaning: "意義",
-        isEditing: false
-      },
-    ]
-  }),
+  components: {
+    articleSetting
+  },
+  // data: () => ({
+  //   direction: "top",
+  //   fab: false,
+  //   fontSetting: false,
+  //   iframeShow: false,
+  //   WordsShow: false,
+  //   fling: false,
+  //   hover: false,
+  //   transition: "slide-y-reverse-transition",
+  //   sizeType: "",
+  //   alignType: "",
+  //   isItalicToggle: false,
+  //   isBoldToggle: false,
+  //   isUnderLineToggle: false,
+  // }),
   methods: {
     //文字サイズ設定
-    fontSize() {
-      if (this.sizeType === "big") {
-        return "font-size-large";
-      } else if (this.sizeType === "small") {
-        return "font-size-small";
-      } else {
-        return "font-size-normal";
-      }
-    },
-    //テキスト揃え設定
-    alignment() {
-      if (this.alignType === "alignCenter") {
-        return "font-center";
-      } else if (this.alignType === "alignLeft") {
-        return "font-left";
-      } else if (this.alignType === "alignRight") {
-        return "font-right";
-      }
-    },
-    isItalic() {
-      this.isItalicToggle == true ? (this.isItalicToggle = false) : (this.isItalicToggle = true);
-    },
-    isBold() {
-      this.isBoldToggle == true ? (this.isBoldToggle = false) : (this.isBoldToggle = true);
-    },
-    isUnderLine() {
-      this.isUnderLineToggle == true ? (this.isUnderLineToggle = false) : (this.isUnderLineToggle = true);
-    },
-    fontSettingBtn() {
-      this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
-    },
-    iframeBtn() {
-      this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
-    },
-    WordsShowBtn() {
-      this.WordsShow == true ? (this.WordsShow = false) : (this.WordsShow = true);
-    },
-    // 英単語削除
-    remove(index:any) {
-      this.wordsData.splice(index, 1);
-    },
-    add() {
-      if (!this.newWord || !this.newMeaning) {
-        return
-      }
-      this.wordsData.push({
-        word: this.newWord,
-        meaning: this.newMeaning,
-        isEditing: false
-      })
-      this.newWord = ""
-      this.newMeaning = ""
-    },
-    change(index:any) {
-      this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
-    },
-    edit(index:any){
-      this.wordsData[index].isEditing == true ? (this.wordsData[index].isEditing = false) : (this.wordsData[index].isEditing = true);
-    },
-    editTask(key:any, wordData:any) {
-      wordData.word = this.wordData.id[0].value
-      wordData.meaning = this.wordData.id[1].value
-      this.$set(this.isEditing, key, false)
-    },
+    // fontSize() {
+    //   if (this.sizeType === "big") {
+    //     return "font-size-large";
+    //   } else if (this.sizeType === "small") {
+    //     return "font-size-small";
+    //   } else {
+    //     return "font-size-normal";
+    //   }
+    // },
+    // //テキスト揃え設定
+    // alignment() {
+    //   if (this.alignType === "alignCenter") {
+    //     return "font-center";
+    //   } else if (this.alignType === "alignLeft") {
+    //     return "font-left";
+    //   } else if (this.alignType === "alignRight") {
+    //     return "font-right";
+    //   }
+    // },
+    // isItalic() {
+    //   this.isItalicToggle == true ? (this.isItalicToggle = false) : (this.isItalicToggle = true);
+    // },
+    // isBold() {
+    //   this.isBoldToggle == true ? (this.isBoldToggle = false) : (this.isBoldToggle = true);
+    // },
+    // isUnderLine() {
+    //   this.isUnderLineToggle == true ? (this.isUnderLineToggle = false) : (this.isUnderLineToggle = true);
+    // },
+    // fontSettingBtn() {
+    //   this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
+    // },
+    // iframeBtn() {
+    //   this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
+    // },
+
   },
   computed: {
-    headline():any {
+    article():any {
       return this.$store.getters["headlines/headline"];
     },
   },
@@ -302,97 +194,41 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.iframe {
-  &__box {
-    position: fixed;
-    top: 10%;
-    right: 2.5%;
-    width: 90%;
-    height: 50vh;
-    z-index: 9999;
-    iframe {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  &__btn {
-    position: absolute;
-    top: 0;
-    right: 2%;
-    background: #fff;
-  }
-}
-
-.word__box {
-  border-top: solid 1px #cbcbcb;
-  &:first-of-type {
-    border-top: none;
-  }
-  small {
-    font-size: 0.65em;
-    color: #868686;
-  }
-  input {
-    width: 100%;
-    border: solid 1px #b1b1b1;
-    border-radius: 5px;
-  }
-}
-
-.word__ttl {
-  font-size: 1.5em;
-  padding-bottom: 5px;
-  margin-bottom: 0;
-  color: #1c63bf;
-  border-bottom: solid 1px #cbcbcb;
-}
-
 .text {
   margin: 20px 0;
   line-height: 1.75;
   text-align: left;
 }
-.fontUnderLine {
-  text-decoration: underline;
-}
-.fontItalic {
-  font-style: italic;
-}
-.fontBold {
-  font-weight: bold;
-}
-.font-size-large {
-  font-size: 18pt;
-}
-.font-size-normal {
-  font-size: 14pt;
-}
-.font-size-small {
-  font-size: 10pt;
-}
-.font-center {
-  text-align: center;
-}
-.font-right {
-  text-align: right;
-}
-.font-left {
-  text-align: left;
-}
+// .fontUnderLine {
+//   text-decoration: underline;
+// }
+// .fontItalic {
+//   font-style: italic;
+// }
+// .fontBold {
+//   font-weight: bold;
+// }
+// .font-size-large {
+//   font-size: 18pt;
+// }
+// .font-size-normal {
+//   font-size: 14pt;
+// }
+// .font-size-small {
+//   font-size: 10pt;
+// }
+// .font-center {
+//   text-align: center;
+// }
+// .font-right {
+//   text-align: right;
+// }
+// .font-left {
+//   text-align: left;
+// }
 
 img {
   width: 100%;
-}
-
-.dial {
-  position: fixed;
-  bottom: 10%;
-  right: 2.5%;
-  span {
-    font-weight: bold;
-    line-height: 1;
-  }
 }
 
 #create {
@@ -404,28 +240,28 @@ img {
   }
 }
 
-.fontSetting {
-  &__box {
-    position: fixed;
-    bottom: 10%;
-    right: 10%;
-    z-index: 9999;
-  }
+// .fontSetting {
+//   &__box {
+//     position: fixed;
+//     bottom: 10%;
+//     right: 10%;
+//     z-index: 9999;
+//   }
 
-  &__txt {
-    line-height: 1;
-    margin-bottom: 0;
-  }
+//   &__txt {
+//     line-height: 1;
+//     margin-bottom: 0;
+//   }
 
-  &__btn{
-    &-close {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: #fff;
-    }
-  }
-}
+//   &__btn{
+//     &-close {
+//       position: absolute;
+//       top: 0;
+//       right: 0;
+//       background: #fff;
+//     }
+//   }
+// }
 
 .info_cat {
   display: flex;
@@ -447,12 +283,13 @@ img {
   padding-right: 50px;
   font-size: 2rem;
   letter-spacing: -0.01em;
+
+  &_box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
 }
 
-.heading_box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
 </style>
