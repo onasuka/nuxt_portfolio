@@ -1,0 +1,260 @@
+<template>
+  <div>
+    <div class="dial">
+      <v-speed-dial
+        v-model="fab"
+        :direction="direction"
+        :open-on-hover="hover"
+        :transition="transition"
+      >
+        <template v-slot:activator>
+          <v-btn color="blue darken-2" dark fab>
+            <v-icon v-if="fab"> mdi-close </v-icon>
+            <v-icon v-else> mdi-dots-horizontal </v-icon>
+          </v-btn>
+        </template>
+        <v-btn fab dark small color="green" @click="iframeBtn">
+          <span>翻<br />訳</span>
+        </v-btn>
+        <v-btn fab dark small color="indigo" @click="fontSettingBtn">
+          <v-icon>mdi-format-font</v-icon>
+        </v-btn>
+      </v-speed-dial>
+    </div>
+    <v-card v-show="fontSetting" max-width="400" class="pa-4 fontSetting__box">
+      <div class="d-flex justify-space-between align-center">
+        <p class="fontSetting__txt">文字サイズ</p>
+        <v-radio-group v-model="sizeType" row class="fontSize__type">
+          <v-radio label="小" value="small"></v-radio>
+
+          <v-radio label="中" value="middle"></v-radio>
+
+          <v-radio label="大" value="big"></v-radio>
+        </v-radio-group>
+      </div>
+      <v-row class="pb-2 ma-0" justify="space-between">
+        <v-btn-toggle class="mr-5" multiple>
+          <v-btn v-on:click="isItalic">
+            <v-icon>mdi-format-italic</v-icon>
+          </v-btn>
+
+          <v-btn v-on:click="isBold">
+            <v-icon>mdi-format-bold</v-icon>
+          </v-btn>
+
+          <v-btn v-on:click="isUnderLine">
+            <v-icon>mdi-format-underline</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+
+        <v-btn-toggle v-model="alignType">
+          <v-btn value="alignCenter">
+            <v-icon>mdi-format-align-center</v-icon>
+          </v-btn>
+
+          <v-btn value="alignLeft">
+            <v-icon>mdi-format-align-left</v-icon>
+          </v-btn>
+
+          <v-btn value="alignRight">
+            <v-icon>mdi-format-align-right</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </v-row>
+      <v-btn
+        @click="fontSettingBtn"
+        color="accent"
+        icon
+        class="fontSetting__btn-close"
+      >
+        <v-icon> mdi-close </v-icon>
+      </v-btn>
+    </v-card>
+    <div class="iframe__box" v-show="iframeShow">
+      <iframe src="https://translate.weblio.jp/"></iframe>
+      <v-btn @click="iframeBtn" color="accent" icon class="iframe__btn">
+        <v-icon> mdi-close </v-icon>
+      </v-btn>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from "vue";
+export default Vue.extend({
+  data() {
+    return {
+      direction: "fontSetting",
+      fab: false,
+      fontSetting: false,
+      iframeShow: false,
+      WordsShow: false,
+      hover: false,
+      transition: "slide-y-reverse-transition",
+      sizeType: "",
+      alignType: "",
+      isItalicToggle: false,
+      isBoldToggle: false,
+      isUnderLineToggle: false,
+    };
+  },
+  methods: {
+    //文字サイズ設定
+    fontSize() {
+      if (this.sizeType === "big") {
+        return "font-size-large";
+      } else if (this.sizeType === "small") {
+        return "font-size-small";
+      } else {
+        return "font-size-normal";
+      }
+    },
+    //テキスト揃え設定
+    alignment() {
+      if (this.alignType === "alignCenter") {
+        return "font-center";
+      } else if (this.alignType === "alignLeft") {
+        return "font-left";
+      } else if (this.alignType === "alignRight") {
+        return "font-right";
+      }
+    },
+    isItalic() {
+      this.isItalicToggle == true
+        ? (this.isItalicToggle = false)
+        : (this.isItalicToggle = true);
+    },
+    isBold() {
+      this.isBoldToggle == true
+        ? (this.isBoldToggle = false)
+        : (this.isBoldToggle = true);
+    },
+    isUnderLine() {
+      this.isUnderLineToggle == true
+        ? (this.isUnderLineToggle = false)
+        : (this.isUnderLineToggle = true);
+    },
+    fontSettingBtn() {
+      this.fontSetting == true
+        ? (this.fontSetting = false)
+        : (this.fontSetting = true);
+    },
+    iframeBtn() {
+      this.iframeShow == true
+        ? (this.iframeShow = false)
+        : (this.iframeShow = true);
+    },
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+.fontUnderLine {
+  text-decoration: underline;
+}
+.fontItalic {
+  font-style: italic;
+}
+.fontBold {
+  font-weight: bold;
+}
+.font-size-large {
+  font-size: 18pt;
+}
+.font-size-normal {
+  font-size: 14pt;
+}
+.font-size-small {
+  font-size: 10pt;
+}
+.font-center {
+  text-align: center;
+}
+.font-right {
+  text-align: right;
+}
+.font-left {
+  text-align: left;
+}
+
+.iframe {
+  &__box {
+    position: fixed;
+    top: 10%;
+    right: 2.5%;
+    width: 90%;
+    height: 50vh;
+    z-index: 9999;
+    iframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__btn {
+    position: absolute;
+    top: 0;
+    right: 2%;
+    background: #fff;
+  }
+}
+
+.word {
+  &__box {
+    border-top: solid 1px #cbcbcb;
+    &:first-of-type {
+      border-top: none;
+    }
+    small {
+      font-size: 0.65em;
+      color: #868686;
+    }
+    input {
+      width: 100%;
+      border: solid 1px #b1b1b1;
+      border-radius: 5px;
+    }
+  }
+
+  &__ttl {
+    font-size: 1.5em;
+    padding-bottom: 5px;
+    margin-bottom: 0;
+    color: #1c63bf;
+    border-bottom: solid 1px #cbcbcb;
+  }
+}
+
+.dial {
+  position: fixed;
+  bottom: 10%;
+  right: 2.5%;
+  span {
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+
+.fontSetting {
+  &__box {
+    position: fixed;
+    bottom: 10%;
+    right: 10%;
+    z-index: 9999;
+  }
+
+  &__txt {
+    line-height: 1;
+    margin-bottom: 0;
+  }
+
+  &__btn {
+    &-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #fff;
+    }
+  }
+}
+</style>
