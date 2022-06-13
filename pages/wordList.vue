@@ -1,28 +1,6 @@
 <template>
   <v-container>
     <p class="word__ttl">英単語一覧</p>
-    <v-dialog v-model="dialog" width="500">
-      <template v-slot:activator="{ on, attrs }">
-        <div class="text-right">
-          <v-btn color="blue" dark v-bind="attrs" v-on="on"> 単語登録 </v-btn>
-        </div>
-      </template>
-      <v-card class="pa-5">
-        <p class="word__ttl">単語登録</p>
-        <v-text-field label="保存したい英単語" v-model="newWord"></v-text-field>
-        <v-textarea
-          label="意味・メモ帳"
-          v-model="newMeaning"
-          auto-grow
-          class="pa-0"
-          rows="2"
-        ></v-textarea>
-        <v-card-actions class="pa-0">
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addWord()" block> 保存 </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <div v-for="(wordItem, index) in wordList" :key="index" class="word__box">
       <div
         class="pt-2 d-flex justify-space-between align-end"
@@ -31,18 +9,27 @@
         <div>
           <small>英単語</small>
           <p class="mb-0 word__text">{{ wordItem.word }}</p>
-          <small>意味・メモ帳</small>
+          <small>意味</small>
           <p class="mt-0">{{ wordItem.meaning }}</p>
         </div>
-        <v-card-actions>
-          <v-btn icon @click="edit(index)">
-            <v-icon>mdi-border-color</v-icon>
+        <div>
+          <v-btn
+            color="blue"
+            dark
+              @click="questionAdd(wordItem)"
+          >
+            問題追加
           </v-btn>
+          <v-card-actions>
+            <v-btn icon @click="edit(index)">
+              <v-icon>mdi-border-color</v-icon>
+            </v-btn>
 
-          <v-btn icon @click="removeWord(index)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-card-actions>
+            <v-btn icon @click="removeWord(index)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </div>
       </div>
       <v-form
         class="py-2 d-flex justify-space-between align-end"
@@ -56,7 +43,7 @@
             v-model="wordItem.word"
             class="pa-0 ma-0"
           ></v-text-field>
-          <small>意味・メモ帳</small>
+          <small>意味</small>
           <v-textarea
             type="text"
             v-model="wordItem.meaning"
@@ -86,9 +73,14 @@ export default defineComponent({
     newMeaning: "",
     dialog: false,
     wordList: [],
+    wordQuestion: "",
+    meaningQuestion: "",
+    questionBox: false,
+    testQuestion: [],
   }),
   async asyncData({ store }: any) {
     let items = await store.dispatch("wordList");
+    let questionItem = await store.dispatch("questionList");
     return {
       wordList: store.state.wordList,
     };
@@ -127,6 +119,36 @@ export default defineComponent({
       console.log(this.wordList[index]);
       this.$store.dispatch("removeWord", this.wordList[index]);
     },
+    questionAdd(wordItem) {
+      const result = window.confirm("テスト問題に追加しますか？")
+      if(result) {
+        this.$store.dispatch("questionAdd", {
+          word: wordItem.word,
+          meaning: wordItem.meaning,
+        });
+      }
+    },
+    removeQuestion(index: number) {
+      console.log(this.wordList[index]);
+      this.$store.dispatch("removeQuestion", this.wordList[index]);
+    },
+  },
+  mounted() {
+    let questionWords = this.$store.getters.questionWord;
+    let headlines = this.wordList;
+    console.log(headlines.length);
+    for (let i = 0; i < headlines.length; i++) {
+      let headlineTitle = headlines[i].word;
+      // console.log(headlineTitle)
+      // console.log(questionWords)
+      let act = this.testQuestion;
+      questionWords.filter(function (value: string) {
+        if (value === headlineTitle) {
+          act[i] = true;
+          console.log(act[i]);
+        }
+      });
+    }
   },
   watch: {
     watchWord() {

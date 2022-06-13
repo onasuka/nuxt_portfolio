@@ -38,7 +38,9 @@ export const state = () => ({
     email: ""
   },
   wordList: [],
-  wordNames : []
+  wordNames : [],
+  questionWord : [],
+  questionList: [],
 });
 
 export const mutations = {
@@ -54,12 +56,10 @@ export const mutations = {
   setArticle(state:any,payload:any) {
     let markitem = state.marklists
     markitem.push(payload)
-    // console.log(state.marklists)
   },
   setTitle(state ,payload) {
     let title = state.markTitles
     title.push(payload)
-    // console.log(state.markTitles)
   },
   signOut(state) {
     state.markTitles = []
@@ -78,17 +78,17 @@ export const mutations = {
   setWordItem(state:any,payload:any) {
     let wordItem = state.wordList
     let wordPieces = wordItem.length
-    // console.log(wordPieces)
-    // for(let i = 0; i < wordPieces; i++) {
-    //   if( wordItem[i].word.includes(payload.word) ) {
-    //     console.log("AA")
-    //   }
-    // }
-    wordItem.push(payload)
-    // console.log(wordItem)
-    // console.log(state.marklists)
-  },
 
+    wordItem.push(payload)
+  },
+  setQuestionWord(state ,payload) {
+    let questionWord = state.questionWord
+    questionWord.push(payload)
+  },
+  setQuestionItem(state:any,payload:any) {
+    let questionItem = state.questionList
+    questionItem.push(payload)
+  },
 };
 
 export const actions = {
@@ -258,6 +258,31 @@ export const actions = {
     const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.slug}`);
     deleteDoc(removeRef);
   },
+  async questionList({ commit }:any) {
+    if(userId) {
+      const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"question"));
+      // console.log(querySnapshot.docs)
+      querySnapshot.forEach((doc) => {
+        let questionItem = doc.data()
+        // console.log(questionItem.word)
+        commit("setQuestionItem" , questionItem)
+        commit("setQuestionWord" , questionItem.word)
+      });
+    }
+  },
+  questionAdd( { commit }:any,question:any) {
+    console.log("追加")
+    let slug = uuidv4(question.word);
+    setDoc(doc(db, "user",`${userId}`,"question",`${slug}`), {
+      word: question.word,
+      meaning: question.meaning,
+    });
+    // commit("setQuestionWord" , question.word)
+  },
+  removeQuestion({commit}:any, removeQuetiond:any) {
+    const removeRef = doc(db, "user",`${userId}`,"question",`${removeQuetiond.slug}`);
+    deleteDoc(removeRef);
+  },
 };
 
 export const getters = {
@@ -272,5 +297,8 @@ export const getters = {
   },
   wordList(state:any) {
     return state.wordList
-  }
+  },
+  questionWord(state:any) {
+    return state.questionWord
+  },
 };
