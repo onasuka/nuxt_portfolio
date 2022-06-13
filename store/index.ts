@@ -56,12 +56,10 @@ export const mutations = {
   setArticle(state:any,payload:any) {
     let markitem = state.marklists
     markitem.push(payload)
-    // console.log(state.marklists)
   },
   setTitle(state ,payload) {
     let title = state.markTitles
     title.push(payload)
-    // console.log(state.markTitles)
   },
   signOut(state) {
     state.markTitles = []
@@ -80,15 +78,8 @@ export const mutations = {
   setWordItem(state:any,payload:any) {
     let wordItem = state.wordList
     let wordPieces = wordItem.length
-    // console.log(wordPieces)
-    // for(let i = 0; i < wordPieces; i++) {
-    //   if( wordItem[i].word.includes(payload.word) ) {
-    //     console.log("AA")
-    //   }
-    // }
+
     wordItem.push(payload)
-    // console.log(wordItem)
-    // console.log(state.marklists)
   },
   setQuestionWord(state ,payload) {
     let questionWord = state.questionWord
@@ -97,8 +88,6 @@ export const mutations = {
   setQuestionItem(state:any,payload:any) {
     let questionItem = state.questionList
     questionItem.push(payload)
-    console.log(payload)
-    console.log(state.marklists)
   },
 };
 
@@ -275,7 +264,7 @@ export const actions = {
       // console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
         let questionItem = doc.data()
-        console.log(questionItem.word)
+        // console.log(questionItem.word)
         commit("setQuestionItem" , questionItem)
         commit("setQuestionWord" , questionItem.word)
       });

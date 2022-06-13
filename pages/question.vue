@@ -2,7 +2,7 @@
   <v-container>
     <p class="questions__ttl">単語テスト</p>
     <div class="card" v-if="status">
-      {{questionList}}
+      <!-- {{questionList}} -->
       <div>
         <p class="title">第{{ number + 1 }}問</p>
         <h4 class="card-title">{{ currentQuestion.word }}の意味は？</h4>

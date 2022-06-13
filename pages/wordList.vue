@@ -1,29 +1,6 @@
 <template>
   <v-container>
     <p class="word__ttl">英単語一覧</p>
-    <!-- <v-dialog v-model="dialog" width="500">
-      <template v-slot:activator="{ on, attrs }">
-        <div class="text-right">
-          <v-btn color="blue" dark v-bind="attrs" v-on="on"> 単語登録 </v-btn>
-        </div>
-      </template>
-      <v-card class="pa-5">
-        <p class="word__ttl">単語登録</p>
-        <v-text-field label="保存したい英単語" v-model="newWord"></v-text-field>
-        <v-textarea
-          label="意味・メモ帳"
-          v-model="newMeaning"
-          auto-grow
-          class="pa-0"
-          rows="2"
-        ></v-textarea>
-        <v-card-actions class="pa-0">
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addWord()" block> 保存 </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-    {{this.testQuestion}}
     <div v-for="(wordItem, index) in wordList" :key="index" class="word__box">
       <div
         class="pt-2 d-flex justify-space-between align-end"
@@ -32,45 +9,17 @@
         <div>
           <small>英単語</small>
           <p class="mb-0 word__text">{{ wordItem.word }}</p>
-          <small>意味・メモ帳</small>
+          <small>意味</small>
           <p class="mt-0">{{ wordItem.meaning }}</p>
         </div>
         <div>
-          <v-dialog v-model="dialog" width="500">
-            <template v-slot:activator="{ on, attrsQuestion }">
-              <div class="text-right">
-                <v-btn 
-                v-if = "testQuestion[index]"
-                color="red" dark v-bind="attrsQuestion" 
-                @click="removeQuestion(index)">
-                  問題削除
-                </v-btn>
-                <v-btn
-                v-else
-                 color="blue" dark v-bind="attrsQuestion" v-on="on">
-                  問題追加
-                </v-btn>
-              </div>
-            </template>
-            <v-card class="pa-5">
-              <p class="word__ttl">問題追加</p>
-              <v-text-field
-                label="英単語"
-                v-model="wordItem.word"
-              ></v-text-field>
-              <v-textarea
-                label="意味"
-                v-model="wordItem.meaning"
-                auto-grow
-                class="pa-0"
-                rows="2"
-              ></v-textarea>
-              <v-card-actions class="pa-0">
-                <v-spacer></v-spacer>
-                <v-btn color="primary" @click="questionAdd()" block> 保存 </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <v-btn
+            color="blue"
+            dark
+              @click="questionAdd(wordItem)"
+          >
+            問題追加
+          </v-btn>
           <v-card-actions>
             <v-btn icon @click="edit(index)">
               <v-icon>mdi-border-color</v-icon>
@@ -94,7 +43,7 @@
             v-model="wordItem.word"
             class="pa-0 ma-0"
           ></v-text-field>
-          <small>意味・メモ帳</small>
+          <small>意味</small>
           <v-textarea
             type="text"
             v-model="wordItem.meaning"
@@ -127,7 +76,7 @@ export default defineComponent({
     wordQuestion: "",
     meaningQuestion: "",
     questionBox: false,
-    testQuestion: []
+    testQuestion: [],
   }),
   async asyncData({ store }: any) {
     let items = await store.dispatch("wordList");
@@ -170,15 +119,14 @@ export default defineComponent({
       console.log(this.wordList[index]);
       this.$store.dispatch("removeWord", this.wordList[index]);
     },
-    questionAdd() {
-      if(this.wordQuestion == "" || this.meaningQuestion == "") return;
-      this.$store.dispatch("questionAdd", {
-        word: this.wordQuestion,
-        meaning: this.meaningQuestion,
-      });
-      this.wordQuestion = "";
-      this.meaningQuestion = "";
-      this.questionBox = false;
+    questionAdd(wordItem) {
+      const result = window.confirm("テスト問題に追加しますか？")
+      if(result) {
+        this.$store.dispatch("questionAdd", {
+          word: wordItem.word,
+          meaning: wordItem.meaning,
+        });
+      }
     },
     removeQuestion(index: number) {
       console.log(this.wordList[index]);
@@ -186,20 +134,20 @@ export default defineComponent({
     },
   },
   mounted() {
-    let questionWords =  this.$store.getters.questionWord
-    let headlines = this.wordList
-    console.log(headlines.length)
+    let questionWords = this.$store.getters.questionWord;
+    let headlines = this.wordList;
+    console.log(headlines.length);
     for (let i = 0; i < headlines.length; i++) {
-      let headlineTitle = headlines[i].word
+      let headlineTitle = headlines[i].word;
       // console.log(headlineTitle)
       // console.log(questionWords)
-      let act = this.testQuestion
-      questionWords.filter(function(value :string) {
-        if( value === headlineTitle) {
-          act[i] =  true
-          console.log("あったよ")
+      let act = this.testQuestion;
+      questionWords.filter(function (value: string) {
+        if (value === headlineTitle) {
+          act[i] = true;
+          console.log(act[i]);
         }
-      })
+      });
     }
   },
   watch: {
