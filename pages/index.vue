@@ -1,86 +1,49 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <v-text-field label="検索" type="text" v-model="search_keyword">
-          <template v-slot:append>
-            <v-btn class="btn btn-info" color="primary" @click="searchKeyword()"
-              >検索</v-btn
-            >
-          </template>
-        </v-text-field>
-      </v-col>
-    </v-row>
-    <!-- {{ this.viewLists[0].title }} -->
-    <!-- {{  this.$store.getters.setTitle }} -->
-    <v-row class="menu-list">
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('')">すべて</a>
-      </v-col>
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('business')">ビジネス</a>
-      </v-col>
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('entertainment')">エンタメ</a>
-      </v-col>
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('health')">健康</a>
-      </v-col>
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('science')">サイエンス</a>
-      </v-col>
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('sports')">スポーツ </a>
-      </v-col>
-      <v-col md="2" class="menu-item">
-        <a @click="newsCategory('technology')">テクノロジー </a>
-      </v-col>
-    </v-row>
+    <homeSearch />
+    <homeMenu />
     <div>
       <div
-        class="headlines__list"
-        v-for="(headline, index) in viewLists"
+        class="article__list"
+        v-for="(article, index) in viewLists"
         :key="index"
         :id="index"
       >
-        <nuxt-link :to="`headlines/${headline.slug}`">
-          <div
-            @click.prevent="submitHeadline(headline)"
-            class="headlines__item"
-          >
-            <div v-if="headline.urlToImage !== null">
+        <nuxt-link :to="`headlines/${article.slug}`">
+          <div @click.prevent="submitHeadline(article)" class="article__item">
+            <div v-if="article.urlToImage !== null">
               <span
-                :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
+                class="article__img"
+                :style="{ backgroundImage: 'url(' + article.urlToImage + ')' }"
               ></span>
             </div>
             <div v-else>
-              <img class="headlines__img" src="~/assets/img/hoge.jpg" >
+              <img class="article__img" src="~/assets/img/hoge.jpg" />
             </div>
-            <div class="headlines__item-txt">
-              <p>{{ headline.title }}</p>
-              {{ headline.slug }}
-              <ul class="headlines__item-info">
-                <li>{{ headline.source.name }}</li>
-                <li>{{ headline.publishedAt }}</li>
+            <div class="article__item-txt">
+              <p>{{ article.title }}</p>
+              {{ article.slug }}
+              <ul class="article__item-info">
+                <li>{{ article.source.name }}</li>
+                <li>{{ article.publishedAt }}</li>
               </ul>
             </div>
           </div>
         </nuxt-link>
-        <div
-         class="btn">
+        <div class="btn">
           <v-btn
-            v-if = "act[index]"
+            v-if="bookMarkDecision[index]"
             icon
             class="red--text text--accent-3"
-            :value="headline.slug"
-            @click.prevent="favoriteDelete(headline,index)">
+            @click.prevent="favoriteDelete(article, index)"
+          >
             <v-icon>mdi-heart</v-icon>
           </v-btn>
           <v-btn
             v-else
             icon
-            :value="headline.slug"
-            @click.prevent="favorite(headline,index)">
+            @click.prevent="favorite(article, index)"
+          >
             <v-icon>mdi-heart</v-icon>
           </v-btn>
         </div>
@@ -95,28 +58,32 @@
 </template>
 
 <script lang="ts">
-import func from 'vue-editor-bridge';
+import homeMenu from "~/components/home/homeMenu.vue";
+import homeSearch from "~/components/home/homeSearch.vue";
 export default {
+  components: {
+    homeMenu,
+    homeSearch,
+  },
   data() {
     return {
-      search_keyword: "",
       page: 1,
       length: 0,
       lists: [],
       viewLists: [],
       pageSize: 10,
-      bookMarkTitle:[],
-      act:[],
+      bookMarkTitle: [],
+      bookMarkDecision: [],
     };
   },
-  
-  async asyncData({ store }:any) {
+
+  async asyncData({ store }: any) {
     const apiUrl = "/api/";
     let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
     let bookMark = await store.dispatch("bookMarks");
-    return{
-      lists : store.state.headlines.headlines
-    }
+    return {
+      lists: store.state.headlines.headlines,
+    };
   },
   computed: {
     filterPages() {
@@ -125,117 +92,102 @@ export default {
   },
   methods: {
     submitHeadline(headline: any) {
-        this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
+      this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
         this.$router.push("/headlines/" + headline.slug);
       });
     },
-    newsCategory(parameter: object) {
-      const apiUrl = "/api/&category=";
-      console.log(apiUrl  + parameter);
-      this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
-      // return this.lists = this.$store.state.headlines.headlines
-    },
-    searchKeyword() {
-      if (this.search_keyword !== "") {
-        const apiUrl = "/api/&q=";
-        console.log(apiUrl + this.search_keyword);
-        this.$store.dispatch("headlines/loadHeadlines",apiUrl + this.search_keyword);
-      }
-    },
-    pageChange( pageNumber:any ){
-      this.viewLists = this.lists.slice(this.pageSize * (pageNumber - 1),this.pageSize * (pageNumber))
+    pageChange(pageNumber: any) {
+      this.viewLists = this.lists.slice(
+        this.pageSize * (pageNumber - 1),
+        this.pageSize * pageNumber
+      );
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
-    favorite(headline:any,id:any) {
-        this.$set(this.act, id, true);
-        this.$store.dispatch('bookMark',headline)
-        // this.bookMarkTitle =  this.$store.getters.setTitle
-    },
-    favoriteDelete(headline:any,id:any) {
-      this.$set(this.act, id, false);
-      this.$store.dispatch('bookMarkDelete',headline)
+    favorite(headline: any, id: any) {
+      this.$set(this.bookMarkDecision, id, true);
+      this.$store.dispatch("bookMark", headline);
       // this.bookMarkTitle =  this.$store.getters.setTitle
-    }
+    },
+    favoriteDelete(headline: any, id: any) {
+      this.$set(this.bookMarkDecision, id, false);
+      this.$store.dispatch("bookMarkDelete", headline);
+      // this.bookMarkTitle =  this.$store.getters.setTitle
+    },
   },
-  mounted(){
-    this.length = Math.ceil(this.lists.length/this.pageSize);
+  mounted() {
+    this.length = Math.ceil(this.lists.length / this.pageSize);
     // listsの個数(30)/1ページで見れる数(10) ページ数を決める
-    this.viewLists = this.lists.slice(0,this.pageSize);
+    this.viewLists = this.lists.slice(0, this.pageSize);
     //受け取ったすべてのデータが格納されているlistsから、0からthis.pageSize(10)までをthis.viewListsに格納する どこからどこまでを表示するか決める
-    let bookMarksTitle =  this.$store.getters.setTitle
-    let headlines = this.viewLists
-    console.log(headlines.length)
+    
+    let bookMarksTitle = this.$store.getters.setTitle;
+    let headlines = this.viewLists;
+    // ブックマークされているか否かの判定
     for (let i = 0; i < headlines.length; i++) {
-      let headlineTitle = headlines[i].title
-      let act = this.act
-      bookMarksTitle.filter(function(value :string) {
-        if( value === headlineTitle) {
-          act[i] =  true
+      let headlineTitle = headlines[i].title;
+      let bookMarkDecision = this.bookMarkDecision;
+      bookMarksTitle.filter(function (value: string) {
+        if (value === headlineTitle) {
+          bookMarkDecision[i] = true;
         }
-      })
+      });
     }
   },
   watch: {
-    filterPages(){
-      this.lists = this.$store.state.headlines.headlines
-      this.length = Math.ceil(this.lists.length/this.pageSize);
-      this.viewLists = this.lists.slice(0,this.pageSize);
+    filterPages() {
+      this.lists = this.$store.state.headlines.headlines;
+      this.length = Math.ceil(this.lists.length / this.pageSize);
+      this.viewLists = this.lists.slice(0, this.pageSize);
       this.page = 1;
     },
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@media (min-width: 1264px) {
-  .container {
-    max-width: 1185px;
-  }
-}
+.article {
+  &__list {
+    display: flex;
+    justify-content: space-between;
+    &:not(:last-of-type) {
+      margin-bottom: 30px;
+    }
 
-.headlines__list {
-  display: flex;
-  justify-content: space-between;
-  &:not(:last-of-type) {
-    margin-bottom: 30px;
-  }
+    a {
+      transition: all 1s ease;
+      text-decoration: none;
 
-  a {
-    text-decoration: none;
-  }
-}
-.headlines__item {
-  display: flex;
-
-  .headlines__img {
-    display: block;
-    width: 200px;
-    height: 150px;
-  }
-  
-  span {
-    display: block;
-    width: 200px;
-    height: 150px;
-    background-position: center;
-    background-size: cover;
-  }
-
-  .headlines__item-txt {
-    width: 80%;
-    margin-left: 3.5%;
-    color: #333;
-    p {
-      margin-bottom: 5px;
+      &:hover {
+        opacity: .7;
+        text-decoration:underline;
+      }
     }
   }
+  &__img {
+      display: block;
+      width: 200px;
+      height: 150px;
+      background-position: center;
+      background-size: cover;
+  }
+  &__item {
+    display: flex;
 
-  .headlines__item-info {
-    padding: 0;
-    li {
-      margin-bottom: 0;
-      font-size: 14px;
+    &-txt {
+      width: 80%;
+      margin-left: 3.5%;
+      color: #333;
+      p {
+        margin-bottom: 5px;
+      }
+    }
+    &-info {
+      padding: 0;
+      li {
+        margin-bottom: 0;
+        font-size: 14px;
+      }
     }
   }
 }
@@ -251,27 +203,6 @@ export default {
   font-size: 1rem;
 }
 
-.menu-list {
-  margin: 0 auto 15px;
-  flex-wrap: nowrap;
-  overflow-x: scroll;
-  -ms-overflow-style: none; /* IE, Edge 対応 */
-  scrollbar-width: none;
-}
-.menu-list::-webkit-scrollbar {
-  /* Chrome, Safari 対応 */
-  display: none;
-}
-
-.menu-item {
-  padding: 0;
-  text-align: center;
-  border-right: solid 1px #333;
-  a {
-    font-size: 13px;
-    color: #333;
-  }
-}
 li {
   display: flex;
   margin-bottom: 15px;
