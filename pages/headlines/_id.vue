@@ -39,7 +39,6 @@
         </div>
       </div>
     </div>
-  <!-- <articleSetting /> -->
     <div class="dial">
       <v-speed-dial
         v-model="fab"
