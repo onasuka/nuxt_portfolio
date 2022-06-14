@@ -1,5 +1,4 @@
 import moment from "moment";
-
 export const state = () => ({
   headlines: [],
   headline: null,
@@ -12,7 +11,6 @@ export const mutations = {
     for (let i = 0; i < payload.length; i++) {
       state.headlines[i].publishedAt = moment(payload.publishedAt).format("YYYY年M月D日")
     }
-    // console.log(state.headlines)
   }, 
   setHeadline(state:any, payload:any) {
     state.headline = payload

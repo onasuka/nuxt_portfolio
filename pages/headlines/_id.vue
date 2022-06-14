@@ -39,8 +39,8 @@
         </div>
       </div>
     </div>
-  <articleSetting />
-    <!-- <div class="dial">
+  <!-- <articleSetting /> -->
+    <div class="dial">
       <v-speed-dial
         v-model="fab"
         :direction="direction"
@@ -111,7 +111,7 @@
       </v-btn>
     </v-card>
     <div class="iframe__box" v-show="iframeShow">
-      <iframe src="https://translate.weblio.jp/"></iframe>
+      <!-- <iframe src="https://translate.weblio.jp/"></iframe> -->
        <v-btn 
         @click="iframeBtn"
         color="accent"
@@ -119,70 +119,66 @@
         class="iframe__btn">
           <v-icon> mdi-close </v-icon>
       </v-btn>
-    </div> -->
+    </div>
 
   </div>
 </template>
 
 <script lang="ts">
-import articleSetting from '~/components/article/articleSetting.vue'
 import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
-  components: {
-    articleSetting
-  },
-  // data: () => ({
-  //   direction: "top",
-  //   fab: false,
-  //   fontSetting: false,
-  //   iframeShow: false,
-  //   WordsShow: false,
-  //   fling: false,
-  //   hover: false,
-  //   transition: "slide-y-reverse-transition",
-  //   sizeType: "",
-  //   alignType: "",
-  //   isItalicToggle: false,
-  //   isBoldToggle: false,
-  //   isUnderLineToggle: false,
-  // }),
+  data: () => ({
+    direction: "top",
+    fab: false,
+    fontSetting: false,
+    iframeShow: false,
+    WordsShow: false,
+    fling: false,
+    hover: false,
+    transition: "slide-y-reverse-transition",
+    sizeType: "",
+    alignType: "",
+    isItalicToggle: false,
+    isBoldToggle: false,
+    isUnderLineToggle: false,
+  }),
   methods: {
     //文字サイズ設定
-    // fontSize() {
-    //   if (this.sizeType === "big") {
-    //     return "font-size-large";
-    //   } else if (this.sizeType === "small") {
-    //     return "font-size-small";
-    //   } else {
-    //     return "font-size-normal";
-    //   }
-    // },
-    // //テキスト揃え設定
-    // alignment() {
-    //   if (this.alignType === "alignCenter") {
-    //     return "font-center";
-    //   } else if (this.alignType === "alignLeft") {
-    //     return "font-left";
-    //   } else if (this.alignType === "alignRight") {
-    //     return "font-right";
-    //   }
-    // },
-    // isItalic() {
-    //   this.isItalicToggle == true ? (this.isItalicToggle = false) : (this.isItalicToggle = true);
-    // },
-    // isBold() {
-    //   this.isBoldToggle == true ? (this.isBoldToggle = false) : (this.isBoldToggle = true);
-    // },
-    // isUnderLine() {
-    //   this.isUnderLineToggle == true ? (this.isUnderLineToggle = false) : (this.isUnderLineToggle = true);
-    // },
-    // fontSettingBtn() {
-    //   this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
-    // },
-    // iframeBtn() {
-    //   this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
-    // },
+    fontSize() {
+      if (this.sizeType === "big") {
+        return "font-size-large";
+      } else if (this.sizeType === "small") {
+        return "font-size-small";
+      } else {
+        return "font-size-normal";
+      }
+    },
+    //テキスト揃え設定
+    alignment() {
+      if (this.alignType === "alignCenter") {
+        return "font-center";
+      } else if (this.alignType === "alignLeft") {
+        return "font-left";
+      } else if (this.alignType === "alignRight") {
+        return "font-right";
+      }
+    },
+    isItalic() {
+      this.isItalicToggle == true ? (this.isItalicToggle = false) : (this.isItalicToggle = true);
+    },
+    isBold() {
+      this.isBoldToggle == true ? (this.isBoldToggle = false) : (this.isBoldToggle = true);
+    },
+    isUnderLine() {
+      this.isUnderLineToggle == true ? (this.isUnderLineToggle = false) : (this.isUnderLineToggle = true);
+    },
+    fontSettingBtn() {
+      this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
+    },
+    iframeBtn() {
+      this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
+    },
 
   },
   computed: {
@@ -199,33 +195,33 @@ export default defineComponent({
   line-height: 1.75;
   text-align: left;
 }
-// .fontUnderLine {
-//   text-decoration: underline;
-// }
-// .fontItalic {
-//   font-style: italic;
-// }
-// .fontBold {
-//   font-weight: bold;
-// }
-// .font-size-large {
-//   font-size: 18pt;
-// }
-// .font-size-normal {
-//   font-size: 14pt;
-// }
-// .font-size-small {
-//   font-size: 10pt;
-// }
-// .font-center {
-//   text-align: center;
-// }
-// .font-right {
-//   text-align: right;
-// }
-// .font-left {
-//   text-align: left;
-// }
+.fontUnderLine {
+  text-decoration: underline;
+}
+.fontItalic {
+  font-style: italic;
+}
+.fontBold {
+  font-weight: bold;
+}
+.font-size-large {
+  font-size: 18pt;
+}
+.font-size-normal {
+  font-size: 14pt;
+}
+.font-size-small {
+  font-size: 10pt;
+}
+.font-center {
+  text-align: center;
+}
+.font-right {
+  text-align: right;
+}
+.font-left {
+  text-align: left;
+}
 
 img {
   width: 100%;
@@ -240,28 +236,86 @@ img {
   }
 }
 
-// .fontSetting {
-//   &__box {
-//     position: fixed;
-//     bottom: 10%;
-//     right: 10%;
-//     z-index: 9999;
-//   }
+.iframe {
+  &__box {
+    position: fixed;
+    top: 10%;
+    right: 2.5%;
+    width: 90%;
+    height: 50vh;
+    z-index: 9999;
+    iframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
 
-//   &__txt {
-//     line-height: 1;
-//     margin-bottom: 0;
-//   }
+  &__btn {
+    position: absolute;
+    top: 0;
+    right: 2%;
+    background: #fff;
+  }
+}
 
-//   &__btn{
-//     &-close {
-//       position: absolute;
-//       top: 0;
-//       right: 0;
-//       background: #fff;
-//     }
-//   }
-// }
+.word {
+  &__box {
+    border-top: solid 1px #cbcbcb;
+    &:first-of-type {
+      border-top: none;
+    }
+    small {
+      font-size: 0.65em;
+      color: #868686;
+    }
+    input {
+      width: 100%;
+      border: solid 1px #b1b1b1;
+      border-radius: 5px;
+    }
+  }
+
+  &__ttl {
+    font-size: 1.5em;
+    padding-bottom: 5px;
+    margin-bottom: 0;
+    color: #1c63bf;
+    border-bottom: solid 1px #cbcbcb;
+  }
+}
+
+.dial {
+  position: fixed;
+  bottom: 10%;
+  right: 2.5%;
+  span {
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+
+.fontSetting {
+  &__box {
+    position: fixed;
+    bottom: 10%;
+    right: 10%;
+    z-index: 9999;
+  }
+
+  &__txt {
+    line-height: 1;
+    margin-bottom: 0;
+  }
+
+  &__btn {
+    &-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #fff;
+    }
+  }
+}
 
 .info_cat {
   display: flex;
