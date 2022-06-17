@@ -2,51 +2,49 @@
   <v-container>
     <homeSearch />
     <homeMenu />
-    <div>
-      <div
-        class="article__list"
-        v-for="(article, index) in viewLists"
-        :key="index"
-        :id="index"
-      >
-        <nuxt-link :to="`headlines/${article.slug}`">
-          <div @click.prevent="submitHeadline(article)" class="article__item">
-            <div v-if="article.urlToImage !== null">
-              <span
-                class="article__img"
-                :style="{ backgroundImage: 'url(' + article.urlToImage + ')' }"
-              ></span>
-            </div>
-            <div v-else>
-              <img class="article__img" src="~/assets/img/hoge.jpg" />
-            </div>
-            <div class="article__item-txt">
-              <p>{{ article.title }}</p>
-              {{ article.slug }}
-              <ul class="article__item-info">
-                <li>{{ article.source.name }}</li>
-                <li>{{ article.publishedAt }}</li>
-              </ul>
-            </div>
+    <div
+      class="article__list"
+      v-for="(article, index) in viewLists"
+      :key="index"
+      :id="index"
+    >
+      <nuxt-link :to="`headlines/${article.slug}`">
+        <div @click.prevent="submitHeadline(article)" class="article__item">
+          <div v-if="article.urlToImage !== null">
+            <span
+              class="article__img"
+              :style="{ backgroundImage: 'url(' + article.urlToImage + ')' }"
+            ></span>
           </div>
-        </nuxt-link>
-        <div class="btn">
-          <v-btn
-            v-if="bookMarkDecision[index]"
-            icon
-            class="red--text text--accent-3"
-            @click.prevent="favoriteDelete(article, index)"
-          >
-            <v-icon>mdi-heart</v-icon>
-          </v-btn>
-          <v-btn
-            v-else
-            icon
-            @click.prevent="favorite(article, index)"
-          >
-            <v-icon>mdi-heart</v-icon>
-          </v-btn>
+          <div v-else>
+            <img class="article__img" src="~/assets/img/hoge.jpg" />
+          </div>
+          <div class="article__item-txt">
+            <p>{{ article.title }}</p>
+            {{ article.slug }}
+            <ul class="article__item-info">
+              <li>{{ article.source.name }}</li>
+              <li>{{ article.publishedAt }}</li>
+            </ul>
+          </div>
         </div>
+      </nuxt-link>
+      <div class="btn">
+        <v-btn
+          v-if="bookMarkDecision[index]"
+          icon
+          class="red--text text--accent-3"
+          @click.prevent="favoriteDelete(article, index)"
+        >
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          icon
+          @click.prevent="favorite(article, index)"
+        >
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
       </div>
     </div>
     <v-pagination
