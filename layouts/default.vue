@@ -5,9 +5,13 @@
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
+      class="pa-3"
       fixed
       app
     >
+    <p class="user_name">
+     {{ userName }}
+    </p>
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
@@ -24,6 +28,9 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <signUpBtn />
+      <logintBtn />
+      <logoutBtn />
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"
@@ -73,78 +80,41 @@
         {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
       </v-col>
     </v-row>
-     <!-- <v-bottom-navigation
-    v-model="value"
-    :background-color="color"
-    dark
-    shift
-  >
-    <v-btn>
-      <span>Video</span>
-      <v-icon>mdi-television-play</v-icon>
-    </v-btn>
-
-    <v-btn>
-      <span>Music</span>
-      <v-icon>mdi-music-note</v-icon>
-    </v-btn>
-
-    <v-btn>
-      <span>Book</span>
-      <v-icon>mdi-book</v-icon>
-    </v-btn>
-
-    <v-btn>
-      <span>Image</span>
-      <v-icon>mdi-image</v-icon>
-    </v-btn>
-  </v-bottom-navigation> -->
   </v-footer>
   </v-app>
 </template>
 
 <script>
+import logoutBtn from "~/components/commonParts/logoutBtn.vue";
+import logintBtn from "~/components/commonParts/loginBtn.vue";
+import signUpBtn from "~/components/commonParts/signUpBtn.vue";
 export default {
+  components: {
+    logoutBtn,
+    logintBtn,
+    signUpBtn
+  },
   data () {
     return {
+      userName: this.$store.state.profile.name,
       clipped: false,
       drawer: false,
       fixed: false,
       items: [
          {
-          icon: 'mdi-chart-bubble',
-          title: 'TOP',
+          icon: 'mdi-home',
+          title: 'ホーム',
           to: '/'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'ログイン画面',
-          to: '/signin'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: '新規登録',
-          to: '/signup'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'ユーザー',
+          icon: 'mdi-account-circle',
+          title: 'ユーザー情報',
           to: '/mypage'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-bookmark',
           title: 'ブックマーク一覧',
           to: '/articles'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: '記事詳細ページ',
-          to: '/articles/[id]'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: '設定',
-          to: '/settings'
         },
       ],
       miniVariant: false,
@@ -161,5 +131,10 @@ export default {
 }
 .v-list-item__title {
   font-size: 1.5rem;
+}
+.user_name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
 }
 </style>
