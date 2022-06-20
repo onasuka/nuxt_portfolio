@@ -1,54 +1,49 @@
 <template>
   <v-container>
-    <v-layout row wrap>
-      <v-flex xs12 text-center>
-        <h2>ブックマーク一覧</h2>
-      </v-flex>
-      <div
-        class="headlines__list"
-        v-for="(headline, index) in marklists"
-        :key="index"
-      >
-        <nuxt-link :to="`headlines/${headline.slug}`">
-          <div
-            @click.prevent="submitHeadline(headline)"
-            class="headlines__item"
-          >
-            <div v-if="headline.urlToImage !== null">
-              <span
-                :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
-              ></span>
-            </div>
-            <div v-else>
-              <img class="headlines__img" src="~/assets/img/hoge.jpg" />
-            </div>
-            <div class="headlines__item-txt">
-              <p>{{ headline.title }}</p>
-              <ul class="headlines__item-info">
-                <li>{{ headline.publishedAt }}</li>
-              </ul>
-            </div>
+    <h2 class="mb-8 pb-5">ブックマーク一覧</h2>
+    <div
+      class="headlines__list"
+      v-for="(headline, index) in marklists"
+      :key="index"
+    >
+      <nuxt-link :to="`headlines/${headline.slug}`">
+        <div @click.prevent="submitHeadline(headline)" class="headlines__item">
+          <div v-if="headline.urlToImage !== null">
+            <span
+              :style="{ backgroundImage: 'url(' + headline.urlToImage + ')' }"
+            ></span>
           </div>
-        </nuxt-link>
-        <div class="btn">
-          <v-btn
-            v-if = "act[index]"
-            icon
-            :value="headline.slug"
-            @click.prevent="favorite(headline,index)">
-            <v-icon>mdi-heart</v-icon>
-          </v-btn>
-          <v-btn
-            v-else
-            icon
-            :value="headline.slug"
-            class="red--text text--accent-3"
-            @click.prevent="favoriteDelete(headline,index)">
-            <v-icon>mdi-heart</v-icon>
-          </v-btn>
+          <div v-else>
+            <img class="headlines__img" src="~/assets/img/hoge.jpg" />
+          </div>
+          <div class="headlines__item-txt">
+            <p>{{ headline.title }}</p>
+            <ul class="headlines__item-info">
+              <li>{{ headline.publishedAt }}</li>
+            </ul>
+          </div>
         </div>
+      </nuxt-link>
+      <div class="btn">
+        <v-btn
+          v-if="act[index]"
+          icon
+          :value="headline.slug"
+          @click.prevent="favorite(headline, index)"
+        >
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          icon
+          :value="headline.slug"
+          class="red--text text--accent-3"
+          @click.prevent="favoriteDelete(headline, index)"
+        >
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
       </div>
-    </v-layout>
+    </div>
   </v-container>
 </template>
 
@@ -68,14 +63,14 @@ export default Vue.extend({
     };
   },
   methods: {
-    favorite(headline:any,id:any) {
-        this.$set(this.act, id, false);
-        this.$store.dispatch('bookMark',headline)
+    favorite(headline: any, id: any) {
+      this.$set(this.act, id, false);
+      this.$store.dispatch("bookMark", headline);
     },
-    favoriteDelete(headline:any,id:any) {
+    favoriteDelete(headline: any, id: any) {
       this.$set(this.act, id, true);
-      this.$store.dispatch('bookMarkDelete',headline)
-    }
+      this.$store.dispatch("bookMarkDelete", headline);
+    },
   },
 });
 </script>
@@ -87,6 +82,8 @@ export default Vue.extend({
 h2 {
   font-size: 2rem;
   margin: 15px 0;
+  text-align: center;
+  border-bottom: solid 1px #b1b1b1;
 }
 li {
   display: flex;
@@ -118,8 +115,10 @@ li {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  padding-bottom: 25px;
   &:not(:last-of-type) {
     margin-bottom: 30px;
+    border-bottom: solid 1px #b1b1b1;
   }
 
   a {

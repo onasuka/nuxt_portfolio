@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <p class="word__ttl">英単語一覧</p>
+    <p class="word__ttl pb-5">英単語一覧</p>
     <div v-for="(wordItem, index) in wordList" :key="index" class="word__box">
       <div
         class="pt-2 d-flex justify-space-between align-end"
@@ -176,11 +176,13 @@ export default defineComponent({
 }
 
 .word__ttl {
-  font-size: 1.5em;
+  font-size: 2rem;
   margin: 10px 0 0;
   padding: 0 0 5px;
   font-weight: bold;
+  text-align: center;
   color: #1c63bf;
+  border-bottom: solid 1px #b1b1b1;
 }
 
 .edit__box {

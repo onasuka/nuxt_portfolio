@@ -1,17 +1,29 @@
 <template>
   <v-container>
-    <p class="questions__ttl">単語テスト</p>
-    <div class="card" v-if="status">
-      <!-- {{questionList}} -->
-      <div>
-        <p class="title">第{{ number + 1 }}問</p>
-        <h4 class="card-title">{{ currentQuestion.word }}の意味は？</h4>
-        <v-textarea v-model="answer" auto-grow class="pa-0" rows="2"></v-textarea>
-        <v-btn @click="selectAnswer(answer)" block> 回答する </v-btn>
-      </div>
+    <div v-if="!questionList">
+      <h3>単語一覧から問題を登録してください！</h3>
+        <NuxtLink to="/wordList">
+          <v-btn 
+            block
+            class="my-4">
+            単語一覧へ
+          </v-btn>
+        </NuxtLink>
     </div>
-    <div v-else class="end">
-      終了です。<br />{{ questions.length }}問中{{ correctCount }}問正解です。
+    <div v-else>
+      <p class="questions__ttl">単語テスト</p>
+      <div v-if="status">
+        <div>
+          <p>第{{ number + 1 }}問</p>
+          <h4>{{ currentQuestion.word }}の意味は？</h4>
+          <v-textarea v-model="answer" auto-grow class="pa-0" rows="2"></v-textarea>
+          <v-btn @click="selectAnswer(answer)" block> 回答する </v-btn>
+        </div>
+      </div>
+      <div v-else class="end">
+        終了です。<br />{{ questions.length }}問中{{ correctCount }}問正解です。
+      </div>
+
     </div>
   </v-container>
 </template>
@@ -36,7 +48,7 @@ export default defineComponent({
     };
   },
   methods: {
-    selectAnswer(answer) {
+    selectAnswer(answer:string) {
       let questionLength = this.questionList.length
       if(this.answer == "") return;
       if (this.answer == this.questionList[this.number].meaning) {
@@ -44,14 +56,11 @@ export default defineComponent({
         alert("正解");
       }
       this.number++;
-      console.log(questionLength)
-
-      //ここから追加
+      console.log(this.number)
       questionLength--;
       if (this.questionLength == 0) {
         this.status = false;
       }
-      //ここまで追加
     },
   },
   computed: {
@@ -74,5 +83,9 @@ export default defineComponent({
 .correct-answer {
   color: #d50000;
   font-weight: bold;
+}
+
+a {
+  text-decoration: none;
 }
 </style>
