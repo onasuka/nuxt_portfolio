@@ -117,6 +117,16 @@ export default {
           title: 'ブックマーク一覧',
           to: '/articles'
         },
+        {
+          icon: 'mdi-view-list',
+          title: '単語一覧',
+          to: '/wordList'
+        },
+        {
+          icon: 'mdi-lead-pencil',
+          title: '理解度テスト',
+          to: '/question'
+        },
       ],
       miniVariant: false,
       right: true,
@@ -131,10 +141,11 @@ export default {
   font-size: 1.5rem;
 }
 .v-list-item__title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 .user_name {
-  font-size: 1.5rem;
+  margin-bottom: 0;
+  font-size: 1.3rem;
   font-weight: bold;
   text-align: center;
 }
