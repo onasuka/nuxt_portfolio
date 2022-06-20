@@ -3,7 +3,7 @@
     <v-col>
       <v-text-field label="検索" type="text" v-model="search_keyword">
         <template v-slot:append>
-          <v-btn class="btn btn-info mb-1" color="primary" @click="searchKeyword()"
+          <v-btn class="btn btn-info mb-2" color="primary" @click="searchKeyword()"
             >検索</v-btn
           >
         </template>

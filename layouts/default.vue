@@ -77,7 +77,7 @@
         class="primary lighten-2 py-4 text-center white--text"
         cols="12"
       >
-        {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+        {{ new Date().getFullYear() }} — <strong>Pooforio</strong>
       </v-col>
     </v-row>
   </v-footer>
@@ -97,6 +97,7 @@ export default {
   data () {
     return {
       userName: this.$store.state.profile.name,
+      loggedIn: this.$store.state.loggedIn,
       clipped: false,
       drawer: false,
       fixed: false,

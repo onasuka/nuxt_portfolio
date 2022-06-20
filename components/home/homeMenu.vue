@@ -39,7 +39,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .menu-list {
-  margin: 0 auto 15px;
+  margin: 0 auto 25px;
   flex-wrap: nowrap;
   overflow-x: scroll;
   -ms-overflow-style: none; /* IE, Edge 対応 */
@@ -53,6 +53,7 @@ export default Vue.extend({
 .menu-item {
   position: relative;
   padding: 0;
+  font-weight: bold;
   text-align: center;
   border-right: solid 1px #333;
   
@@ -64,7 +65,7 @@ export default Vue.extend({
   a {
     font-size: 13px;
     color: #333;
-    transition: all 1s ease;
+    transition: all 0.5s ease;
   }
 }
 </style>

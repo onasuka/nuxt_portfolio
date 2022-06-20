@@ -110,7 +110,7 @@
       </v-btn>
     </v-card>
     <div class="iframe__box" v-show="iframeShow">
-      <!-- <iframe src="https://translate.weblio.jp/"></iframe> -->
+      <iframe width="100%" height="100%" src="https://translate.weblio.jp/"></iframe>
        <v-btn 
         @click="iframeBtn"
         color="accent"
@@ -243,10 +243,6 @@ img {
     width: 90%;
     height: 50vh;
     z-index: 9999;
-    iframe {
-      width: 100%;
-      height: 100%;
-    }
   }
 
   &__btn {

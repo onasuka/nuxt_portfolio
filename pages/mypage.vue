@@ -89,8 +89,7 @@
           >新しいパスワードに変更する</v-btn
           >
           <v-btn block class="mb-2" color="error" @click="signOut"
-            >ログアウト</v-btn
-          >
+            >ログアウト</v-btn>
         </v-card-text>
         <div 
           class="password"
