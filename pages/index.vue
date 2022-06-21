@@ -29,7 +29,7 @@
           </div>
         </div>
       </nuxt-link>
-      <div class="btn">
+      <div v-if="loggedIn" class="btn">
         <v-btn
           v-if="bookMarkDecision[index]"
           icon
@@ -72,6 +72,7 @@ export default {
       pageSize: 10,
       bookMarkTitle: [],
       bookMarkDecision: [],
+      loggedIn: this.$store.state.loggedIn,
     };
   },
 

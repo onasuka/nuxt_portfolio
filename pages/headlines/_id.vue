@@ -9,7 +9,7 @@
         <div>
           <div class="heading_box">
             <h2 class="heading">{{ article.title }}</h2>
-            <div class="btn">
+            <div class="btn" v-if="loggedIn">
               <v-btn-toggle tile color="red accent-3" group>
                 <v-btn>
                   <v-icon>mdi-heart</v-icon>
@@ -52,9 +52,11 @@
             <v-icon v-else> mdi-dots-horizontal </v-icon>
           </v-btn>
         </template>
-        <v-btn fab dark small color="green" @click="iframeBtn">
-          <span>翻<br />訳</span>
-        </v-btn>
+        <a href="https://translate.weblio.jp/" target="_blank">
+          <v-btn fab dark small color="green">
+            <span>翻<br />訳</span>
+          </v-btn>
+        </a>
         <v-btn fab dark small color="indigo" @click="fontSettingBtn">
           <v-icon>mdi-format-font</v-icon>
         </v-btn>
@@ -109,7 +111,7 @@
           <v-icon> mdi-close </v-icon>
       </v-btn>
     </v-card>
-    <div class="iframe__box" v-show="iframeShow">
+    <!-- <div class="iframe__box" v-show="iframeShow">
       <iframe width="100%" height="100%" src="https://translate.weblio.jp/"></iframe>
        <v-btn 
         @click="iframeBtn"
@@ -118,7 +120,7 @@
         class="iframe__btn">
           <v-icon> mdi-close </v-icon>
       </v-btn>
-    </div>
+    </div> -->
 
   </div>
 </template>
@@ -127,21 +129,25 @@
 import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
-  data: () => ({
-    direction: "top",
-    fab: false,
-    fontSetting: false,
-    iframeShow: false,
-    WordsShow: false,
-    fling: false,
-    hover: false,
-    transition: "slide-y-reverse-transition",
-    sizeType: "",
-    alignType: "",
-    isItalicToggle: false,
-    isBoldToggle: false,
-    isUnderLineToggle: false,
-  }),
+  data() {
+    return {
+      direction: "top",
+      fab: false,
+      fontSetting: false,
+      iframeShow: false,
+      WordsShow: false,
+      fling: false,
+      hover: false,
+      transition: "slide-y-reverse-transition",
+      sizeType: "",
+      alignType: "",
+      isItalicToggle: false,
+      isBoldToggle: false,
+      isUnderLineToggle: false,
+      loggedIn: this.$store.state.loggedIn,
+    }
+  },
+
   methods: {
     //文字サイズ設定
     fontSize() {
@@ -175,9 +181,9 @@ export default defineComponent({
     fontSettingBtn() {
       this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
     },
-    iframeBtn() {
-      this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
-    },
+    // iframeBtn() {
+    //   this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
+    // },
 
   },
   computed: {
