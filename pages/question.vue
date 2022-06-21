@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div v-if="!questionList">
+    <div v-if="questionList == 0">
       <h3>単語一覧から問題を登録してください！</h3>
         <NuxtLink to="/wordList">
           <v-btn 
@@ -11,17 +11,20 @@
         </NuxtLink>
     </div>
     <div v-else>
-      <p class="questions__ttl">単語テスト</p>
       <div v-if="status">
         <div>
-          <p>第{{ number + 1 }}問</p>
+          <p class="questions__ttl">単語テスト</p>
+          <p class="mb-2">第{{ number + 1 }}問</p>
           <h4>{{ currentQuestion.word }}の意味は？</h4>
-          <v-textarea v-model="answer" auto-grow class="pa-0" rows="2"></v-textarea>
+          <v-textarea v-model="answer" auto-grow class="pa-0" rows="1"></v-textarea>
           <v-btn @click="selectAnswer(answer)" block> 回答する </v-btn>
+
         </div>
       </div>
       <div v-else class="end">
-        終了です。<br />{{ questions.length }}問中{{ correctCount }}問正解です。
+        <p>
+          終了です。<br /><span>{{ questionList.length }}</span>問中<span>{{ correctCount }}</span>問正解です。
+        </p>
       </div>
 
     </div>
@@ -53,12 +56,15 @@ export default defineComponent({
       if(this.answer == "") return;
       if (this.answer == this.questionList[this.number].meaning) {
         this.correctCount++;
+        console.log("正解！")
         alert("正解");
+      } else {
+         alert("不正解！答えは"+ `${this.questionList[this.number].meaning}`);
       }
       this.number++;
-      console.log(this.number)
       questionLength--;
-      if (this.questionLength == 0) {
+      console.log(questionLength)
+      if (questionLength == 0) {
         this.status = false;
       }
     },
@@ -87,5 +93,13 @@ export default defineComponent({
 
 a {
   text-decoration: none;
+}
+.end {
+  font-size: 1rem;
+  font-weight: bold;
+  span {
+    font-size: 1.7rem;
+    padding: 0 5px;
+  }
 }
 </style>
