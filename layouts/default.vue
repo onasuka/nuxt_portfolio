@@ -28,9 +28,12 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <signUpBtn />
-      <logintBtn />
-      <logoutBtn />
+      <div v-if="!loggedIn">
+        <logintBtn />
+      </div>
+      <div v-else>
+        <logoutBtn />
+      </div>
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"

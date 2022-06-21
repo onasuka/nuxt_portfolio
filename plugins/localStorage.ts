@@ -4,7 +4,9 @@ export default ({ store }) => {
   createPersistedState({
     key: 'myApp',
     paths: [
-      'headlines.headline'
+      'headlines.headline',
+      'loggedIn',
+      'profile'
     ]
   })(store)
 }
