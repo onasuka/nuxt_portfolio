@@ -229,6 +229,7 @@ export default {
                         password: this.register_password
                     })
                     .then(() => {
+                        this.$store.dispatch('userDateUp',{email: this.register_email})
                         this.register_email = ''
                         this.register_password = ''
                         this.$router.push({
@@ -239,7 +240,6 @@ export default {
                                     'アカウントの登録が完了しました。'
                             }
                         })
-                        this.$store.commit('login')
                     })
                     .catch((err) => {
                         console.log(err)
@@ -253,7 +253,6 @@ export default {
                                 'エラーにより登録できませんでした。'
                         }
                     }) 
-               this.$store.dispatch('userDateUp',{email: this.register_email})
             }
         }
     }
