@@ -20,9 +20,6 @@ export default Vue.extend({
             name: "login",
           });
           this.$store.commit("logout");
-          this.$router.push({
-            name: "index",
-          });
         })
         .catch((err) => {
           alert(err.message);
