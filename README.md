@@ -32,14 +32,20 @@ For detailed explanation on how things work, check out the [documentation](https
   ・NewsAPI
 
 ### 実装機能
-・ユーザー新規登録・ログイン（Google・匿名ログイン）
+・ユーザー新規登録
+
+・ログイン（Google・匿名ログイン）
+
 ・海外の記事を取得する用にNewsAPIを使用
+
 ・ブックマーク機能・単語登録機能
+
 ・理解度テスト機能
 
 ### 今後の実装予定機能
 
 ・詳細ページ内での翻訳機能追加
+
 ・記事部分にコメント機能追加
 
 
