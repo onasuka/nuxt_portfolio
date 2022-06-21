@@ -81,6 +81,14 @@ export const mutations = {
 
     wordItem.push(payload)
   },
+  deleteWordItem(state:any){
+    state.wordList = []
+  },
+  removeWordItem(state:any, payload: any) {
+    let wordItem = state.wordList
+    wordItem.splice(payload.wordNumber,1)
+    console.log(wordItem)
+  },
   setQuestionWord(state ,payload) {
     let questionWord = state.questionWord
     questionWord.push(payload)
@@ -233,12 +241,11 @@ export const actions = {
       isEditing: false,
       slug:slug
     });
-    // commit("setWordItem" , wordItem)
+    commit("setWordItem" , wordItem)
   },
   async wordList({ commit }:any) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"word"));
-      // console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
         let wordItem = doc.data()
         commit("setWordItem" , wordItem)
@@ -247,7 +254,6 @@ export const actions = {
   },
   saveWord({ commit }:any,changeWord:any) {
     const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.slug}`);
-    // console.log(changeWord.state.wordList[0])
     console.log(changeWord)
     updateDoc(washingtonRef, {
       word: changeWord.word,
@@ -255,8 +261,9 @@ export const actions = {
     });
   },
   removeWord({commit}:any, removeWord:any) {
-    const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.slug}`);
+    const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.word.slug}`);
     deleteDoc(removeRef);
+    commit("removeWordItem",removeWord)
   },
   async questionList({ commit }:any) {
     if(userId) {

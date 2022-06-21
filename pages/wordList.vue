@@ -4,7 +4,7 @@
     <v-dialog v-model="dialog" width="500">
       <template v-slot:activator="{ on, attrs }">
         <div class="text-right">
-          <v-btn color="blue" dark v-bind="attrs" v-on="on"> 単語登録 </v-btn>
+          <v-btn color="blue" dark v-bind="attrs" v-on="on" class="mb-8"> 単語登録 </v-btn>
         </div>
       </template>
       <v-card class="pa-5">
@@ -21,6 +21,7 @@
         <v-btn color="error" @click="cancelWord" block> キャンセル </v-btn>
       </v-card>
     </v-dialog>
+    <v-divider></v-divider>
     <div v-for="(wordItem, index) in wordList" :key="index" class="word__box">
       <div
         class="pt-2 d-flex justify-space-between align-end"
@@ -129,16 +130,24 @@ export default defineComponent({
       this.newWord = "";
       this.newMeaning = "";
       this.dialog = false;
+      console.log(this.wordList)
+      // return this.wordList = this.$store.state.wordList
+      // this.$store.dispatch("wordList");
     },
     cancelWord() {
       this.dialog = false;
+      this.newWord = "";
+      this.newMeaning = "";
     },
     saveWord(index: number) {
       this.$store.dispatch("saveWord", this.wordList[index]);
       this.edit(index);
     },
     removeWord(index: number) {
-      this.$store.dispatch("removeWord", this.wordList[index]);
+      this.$store.dispatch("removeWord", {
+       word: this.wordList[index],
+       wordNumber: index
+      });
     },
     questionAdd(wordItem) {
       const result = window.confirm("テスト問題に追加しますか？")
