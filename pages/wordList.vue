@@ -1,6 +1,27 @@
 <template>
   <v-container>
-    <p class="word__ttl pb-5">英単語一覧</p>
+    <p class="word__ttl">英単語一覧</p>
+    <v-dialog v-model="dialog" width="500">
+      <template v-slot:activator="{ on, attrs }">
+        <div class="text-right">
+          <v-btn color="blue" dark v-bind="attrs" v-on="on" class="mb-8"> 単語登録 </v-btn>
+        </div>
+      </template>
+      <v-card class="pa-5">
+        <p class="word__ttl">単語登録</p>
+        <v-text-field label="保存したい英単語" v-model="newWord"></v-text-field>
+        <v-textarea
+          label="意味・メモ帳"
+          v-model="newMeaning"
+          auto-grow
+          class="pa-0"
+          rows="2"
+        ></v-textarea>
+        <v-btn color="primary" class="my-5" @click="addWord()" block> 保存 </v-btn>
+        <v-btn color="error" @click="cancelWord" block> キャンセル </v-btn>
+      </v-card>
+    </v-dialog>
+    <v-divider></v-divider>
     <div v-for="(wordItem, index) in wordList" :key="index" class="word__box">
       <div
         class="pt-2 d-flex justify-space-between align-end"
@@ -101,7 +122,7 @@ export default defineComponent({
       this.$set(this.isEditing, key, false);
     },
     addWord() {
-      console.log(this.newWord);
+      if(this.newWord == "" || this.newMeaning == "" ) return;
       this.$store.dispatch("addWord", {
         word: this.newWord,
         meaning: this.newMeaning,
@@ -109,15 +130,24 @@ export default defineComponent({
       this.newWord = "";
       this.newMeaning = "";
       this.dialog = false;
+      console.log(this.wordList)
+      // return this.wordList = this.$store.state.wordList
+      // this.$store.dispatch("wordList");
+    },
+    cancelWord() {
+      this.dialog = false;
+      this.newWord = "";
+      this.newMeaning = "";
     },
     saveWord(index: number) {
-      console.log(this.wordList[index]);
       this.$store.dispatch("saveWord", this.wordList[index]);
       this.edit(index);
     },
     removeWord(index: number) {
-      console.log(this.wordList[index]);
-      this.$store.dispatch("removeWord", this.wordList[index]);
+      this.$store.dispatch("removeWord", {
+       word: this.wordList[index],
+       wordNumber: index
+      });
     },
     questionAdd(wordItem) {
       const result = window.confirm("テスト問題に追加しますか？")
@@ -129,23 +159,18 @@ export default defineComponent({
       }
     },
     removeQuestion(index: number) {
-      console.log(this.wordList[index]);
       this.$store.dispatch("removeQuestion", this.wordList[index]);
     },
   },
   mounted() {
     let questionWords = this.$store.getters.questionWord;
     let headlines = this.wordList;
-    console.log(headlines.length);
     for (let i = 0; i < headlines.length; i++) {
       let headlineTitle = headlines[i].word;
-      // console.log(headlineTitle)
-      // console.log(questionWords)
       let act = this.testQuestion;
       questionWords.filter(function (value: string) {
         if (value === headlineTitle) {
           act[i] = true;
-          console.log(act[i]);
         }
       });
     }
@@ -182,7 +207,6 @@ export default defineComponent({
   font-weight: bold;
   text-align: center;
   color: #1c63bf;
-  border-bottom: solid 1px #b1b1b1;
 }
 
 .edit__box {
