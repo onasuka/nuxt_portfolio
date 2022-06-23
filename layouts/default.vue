@@ -9,7 +9,7 @@
       fixed
       app
     >
-    <p class="user_name">
+    <p v-if="loggedIn" class="user_name">
      {{ userName }}
     </p>
       <v-list>
