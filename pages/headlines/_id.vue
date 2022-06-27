@@ -185,7 +185,7 @@ export default defineComponent({
 
   },
   computed: {
-    article():any {
+    article() {
       return this.$store.getters["headlines/headline"];
     },
   },
