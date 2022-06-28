@@ -99,7 +99,7 @@ export default defineComponent({
     questionBox: false,
     testQuestion: [],
   }),
-  async asyncData({ store }: any) {
+  async asyncData({ store }) {
     let items = await store.dispatch("wordList");
     let questionItem = await store.dispatch("questionList");
     return {
@@ -108,15 +108,15 @@ export default defineComponent({
   },
   methods: {
     // 英単語削除
-    remove(index: any) {
+    remove(index: number) {
       this.wordList.splice(index, 1);
     },
-    edit(index: any) {
+    edit(index: number) {
       this.wordList[index].isEditing == true
         ? (this.wordList[index].isEditing = false)
         : (this.wordList[index].isEditing = true);
     },
-    editTask(key: any, wordData: any) {
+    editTask(key: number, wordData: {word:string, meaning: string}) {
       wordData.word = this.wordData.id[0].value;
       wordData.meaning = this.wordData.id[1].value;
       this.$set(this.isEditing, key, false);
@@ -149,7 +149,7 @@ export default defineComponent({
        wordNumber: index
       });
     },
-    questionAdd(wordItem) {
+    questionAdd(wordItem: { word:string, meaning: string}) {
       const result = window.confirm("テスト問題に追加しますか？")
       if(result) {
         this.$store.dispatch("questionAdd", {
