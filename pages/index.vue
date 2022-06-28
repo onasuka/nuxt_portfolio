@@ -76,7 +76,7 @@ export default {
     };
   },
 
-  async asyncData({ store }: any) {
+  async asyncData({ store }) {
     const apiUrl = "/api/";
     let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
     let bookMark = await store.dispatch("bookMarks");
@@ -90,12 +90,12 @@ export default {
     },
   },
   methods: {
-    submitHeadline(headline: any) {
+    submitHeadline(headline: {slug: string}) {
       this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
         this.$router.push("/headlines/" + headline.slug);
       });
     },
-    pageChange(pageNumber: any) {
+    pageChange(pageNumber: number) {
       this.viewLists = this.lists.slice(
         this.pageSize * (pageNumber - 1),
         this.pageSize * pageNumber
@@ -103,15 +103,13 @@ export default {
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
-    favorite(headline: any, id: any) {
+    favorite(headline:string, id: number) {
       this.$set(this.bookMarkDecision, id, true);
       this.$store.dispatch("bookMark", headline);
-      // this.bookMarkTitle =  this.$store.getters.setTitle
     },
-    favoriteDelete(headline: any, id: any) {
+    favoriteDelete(headline: string, id: number) {
       this.$set(this.bookMarkDecision, id, false);
       this.$store.dispatch("bookMarkDelete", headline);
-      // this.bookMarkTitle =  this.$store.getters.setTitle
     },
   },
   mounted() {

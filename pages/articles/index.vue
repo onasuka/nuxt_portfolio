@@ -56,20 +56,25 @@ export default Vue.extend({
       act: [],
     };
   },
-  async asyncData({ store }: any) {
+  async asyncData({ store }) {
     let items = await store.dispatch("bookMarks");
     return {
       marklists: store.state.marklists,
     };
   },
   methods: {
-    favorite(headline: any, id: any) {
+    favorite(headline: string, id: number) {
       this.$set(this.act, id, false);
       this.$store.dispatch("bookMark", headline);
     },
-    favoriteDelete(headline: any, id: any) {
+    favoriteDelete(headline: string, id: number) {
       this.$set(this.act, id, true);
       this.$store.dispatch("bookMarkDelete", headline);
+    },
+    submitHeadline(headline: {slug: string}) {
+      this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
+        this.$router.push("/headlines/" + headline.slug);
+      });
     },
   },
 });
@@ -123,6 +128,10 @@ li {
 
   a {
     text-decoration: none;
+    &:hover {
+      opacity: .7;
+      text-decoration:underline;
+    }
   }
 }
 

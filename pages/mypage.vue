@@ -179,7 +179,7 @@ export default Vue.extend({
       changeProfile_valid: true,
       show_Password: false,
       emailRules: [
-        (v) => {
+        (v:string) => {
           if (v) {
             return (
               /.+@.+\..+/.test(v) || "有効なメールアドレスを入力してください"
@@ -190,7 +190,7 @@ export default Vue.extend({
         },
       ],
       changePasswordAgainRules: [
-        (v) => {
+        (v:string) => {
           if (v) {
             return (
               this.$refs.changePassword.value === v ||
@@ -220,7 +220,7 @@ export default Vue.extend({
           : (this.editProfile = true);
       this.isVisible = false;
     },
-    signOut: function (err) {
+    signOut(err:string) {
       this.$store
         .dispatch("signOut")
         .then(() => {
@@ -246,7 +246,7 @@ export default Vue.extend({
         this.$store.dispatch('saveProfile',{name: this.profile.name})
       }
     },
-    saveEmail(password) {
+    saveEmail(password:string) {
       let newEmail = this.profile.email;
       console.log(newEmail);
       this.$store.dispatch("saveEmail", { newEmail, password });

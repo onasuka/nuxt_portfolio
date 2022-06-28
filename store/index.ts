@@ -43,8 +43,43 @@ export const state = () => ({
   questionList: [],
 });
 
+
+type LoginInfo = {
+  email: string
+  password: string
+}
+
+interface ArticleInfo {
+  source: string,
+  author: string,
+  content: string,
+  description: string,
+  publishedAt: string,
+  slug: string,
+  title: string,
+  url: string,
+  urlToImage: string,
+}
+interface WordInfo {
+  word: object,
+  meaning: string,
+  slug: string
+}
+interface UseInfo {
+  use: string,
+  name: string,
+  email: string,
+}
+interface removeWordInfo {
+  word: {
+    word: string,
+    meaning: string,
+    slug: string,
+  }
+}
+
 export const mutations = {
-  setUser(state, payload) {
+  setUser(state, payload:string) {
     state.user = payload;
   },
   login(state) {
@@ -53,11 +88,11 @@ export const mutations = {
   logout(state) {
     state.loggedIn = false;
   },
-  setArticle(state:any,payload:any) {
+  setArticle(state,payload:string) {
     let markitem = state.marklists
     markitem.push(payload)
   },
-  setTitle(state ,payload) {
+  setTitle(state ,payload:string) {
     let title = state.markTitles
     title.push(payload)
   },
@@ -65,7 +100,7 @@ export const mutations = {
     state.markTitles = []
   },
 
-  setProfile(state, user) {
+  setProfile(state, user:UseInfo) {
     if(user) {
       state.profile.name = user.name
       state.profile.email = user.email
@@ -75,47 +110,51 @@ export const mutations = {
     }
   },
 
-  setWordItem(state:any,payload:any) {
+  setWordItem(state,payload:string) {
     let wordItem = state.wordList
     let wordPieces = wordItem.length
 
     wordItem.push(payload)
   },
-  deleteWordItem(state:any){
+  deleteWordItem(state){
     state.wordList = []
   },
-  removeWordItem(state:any, payload: any) {
+  removeWordItem(state, payload: {wordNumber: string}) {
     let wordItem = state.wordList
     wordItem.splice(payload.wordNumber,1)
     console.log(wordItem)
   },
-  setQuestionWord(state ,payload) {
+  setQuestionWord(state ,payload:string) {
     let questionWord = state.questionWord
     questionWord.push(payload)
   },
-  setQuestionItem(state:any,payload:any) {
+  setQuestionItem(state ,payload:string) {
     let questionItem = state.questionList
     questionItem.push(payload)
   },
 };
 
 export const actions = {
-  signUp({ commit }, { email, password }) {
+  signUp({ commit }, { email, password }:LoginInfo) {
+    commit("login")
     return auth().createUserWithEmailAndPassword(email, password);
   },
 
-  signInWithEmail({ commit }:any, { email, password }:any) {
+  signInWithEmail({ commit }, { email, password }:LoginInfo) {
+    commit("login")
     return auth().signInWithEmailAndPassword(email, password);
   },
 
-  signInWithGoogle({ commit }:any) {
+  signInWithGoogle({ commit }) {
+    commit("login")
     return auth().signInWithPopup(new auth.GoogleAuthProvider());
   },
   
-  signInWithguestsLogin({ commit }:any) {
+  signInWithguestsLogin({ commit }) {
     const getAuth = auth();
     signInAnonymously(getAuth)
     .then(() => {
+      commit("login")
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -124,12 +163,12 @@ export const actions = {
     });
   },
 
-  signOut({ commit }:any) {
+  signOut({ commit }) {
     commit("signOut")
     commit("setProfile")
     return auth().signOut();
   },
-  async bookMarks({ commit }:any) {
+  async bookMarks({ commit }) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       // console.log(querySnapshot.docs)
@@ -140,10 +179,11 @@ export const actions = {
       });
     }
   },
-  bookMark({ commit }:any , headline:any) {
+  bookMark({ commit } , headline:ArticleInfo) {
     //新規ドキュメントIDを指定
     let documetId = headline.slug
     setDoc(doc(db, `${userId}`, `${documetId}`), {
+      source: headline.source,
       author: headline.author,
       content: headline.content,
       description: headline.description,
@@ -154,12 +194,12 @@ export const actions = {
       urlToImage: headline.urlToImage,
     });
   },
-  bookMarkDelete({commit}:any, headline:any) {
+  bookMarkDelete({commit}, headline:ArticleInfo) {
     let documetId = headline.slug
     deleteDoc(doc(db, `${userId}`,`${documetId}`));
   },
 
-  userDateUp({commit},user) {
+  userDateUp({commit},user:UseInfo) {
     // console.log(user.email)
     let userEmail = user.email
     let userName = userEmail.substr(0, userEmail.indexOf("@"));
@@ -170,7 +210,7 @@ export const actions = {
     commit("setProfile" , {name:userName,email:userEmail})
   },
   
-  saveProfile({commit}:any, user:any) {
+  saveProfile({commit}, user:UseInfo) {
     const washingtonRef = doc(db, "profile",  `${userId}`);
     setDoc(washingtonRef, {
       name: user.name,
@@ -178,7 +218,7 @@ export const actions = {
     console.log(user.name)
     commit("setProfile" , user.name)
   },
-  async saveEmail({commit}:any, { newEmail, password }:{newEmail:string, password: string}) {
+  async saveEmail({commit}, { newEmail, password }:{newEmail:string, password: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
     console.log(newEmail)
@@ -191,21 +231,17 @@ export const actions = {
       // User re-authenticated.
       updateEmail(user, newEmail).then(() => {
         // Email updated!
-        // ...
-        console.log("通った")
-
       }).catch((error) => {
         // An error occurred
         // ...
       });
     }).catch((error) => {
       // An error ocurred
-      console.log("通ってない")
       console.log(error)
       // ...
     });
   },
-  async savePassword({commit}:any, { password, newPassword }:{password:string, newPassword: string}) {
+  async savePassword({ commit }, { password, newPassword }:{password:string, newPassword: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
     console.log(password)
@@ -232,7 +268,7 @@ export const actions = {
     });
   },
 
-  addWord({commit}:any, wordItem:any) {
+  addWord({ commit }, wordItem:WordInfo) {
   //ランダムIDを生成
     let slug = uuidv4(wordItem.word);
     setDoc(doc(db, "user",`${userId}`,"word",`${slug}`), {
@@ -243,7 +279,7 @@ export const actions = {
     });
     commit("setWordItem" , wordItem)
   },
-  async wordList({ commit }:any) {
+  async wordList({ commit }) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"word"));
       querySnapshot.forEach((doc) => {
@@ -252,7 +288,7 @@ export const actions = {
       });
     }
   },
-  saveWord({ commit }:any,changeWord:any) {
+  saveWord({ commit },changeWord:WordInfo) {
     const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.slug}`);
     console.log(changeWord)
     updateDoc(washingtonRef, {
@@ -260,12 +296,13 @@ export const actions = {
       meaning: changeWord.meaning,
     });
   },
-  removeWord({commit}:any, removeWord:any) {
+  removeWord({commit}, removeWord:removeWordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.word.slug}`);
+    console.log(removeWord)
     deleteDoc(removeRef);
     commit("removeWordItem",removeWord)
   },
-  async questionList({ commit }:any) {
+  async questionList({ commit }) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"question"));
       // console.log(querySnapshot.docs)
@@ -277,8 +314,7 @@ export const actions = {
       });
     }
   },
-  questionAdd( { commit }:any,question:any) {
-    console.log("追加")
+  questionAdd( { commit },question:WordInfo) {
     let slug = uuidv4(question.word);
     setDoc(doc(db, "user",`${userId}`,"question",`${slug}`), {
       word: question.word,
@@ -286,26 +322,26 @@ export const actions = {
     });
     // commit("setQuestionWord" , question.word)
   },
-  removeQuestion({commit}:any, removeQuetiond:any) {
+  removeQuestion({ commit }, removeQuetiond:WordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"question",`${removeQuetiond.slug}`);
     deleteDoc(removeRef);
   },
 };
 
 export const getters = {
-  user(state:any) {
+  user(state) {
     return state.user;
   },
-  isAuthenticated(state:any) {
+  isAuthenticated(state) {
     return !!state.user;
   },
-  setTitle(state:any) {
+  setTitle(state) {
     return state.markTitles;
   },
-  wordList(state:any) {
+  wordList(state) {
     return state.wordList
   },
-  questionWord(state:any) {
+  questionWord(state) {
     return state.questionWord
   },
 };

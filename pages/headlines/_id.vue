@@ -52,11 +52,9 @@
             <v-icon v-else> mdi-dots-horizontal </v-icon>
           </v-btn>
         </template>
-        <a href="https://translate.weblio.jp/" target="_blank">
-          <v-btn fab dark small color="green">
-            <span>翻<br />訳</span>
-          </v-btn>
-        </a>
+        <v-btn fab dark small color="green" @click="iframeBtn">
+          <span>翻<br />訳</span>
+        </v-btn>
         <v-btn fab dark small color="indigo" @click="fontSettingBtn">
           <v-icon>mdi-format-font</v-icon>
         </v-btn>
@@ -111,7 +109,7 @@
           <v-icon> mdi-close </v-icon>
       </v-btn>
     </v-card>
-    <!-- <div class="iframe__box" v-show="iframeShow">
+    <div class="iframe__box" v-if="iframeShow">
       <iframe width="100%" height="100%" src="https://translate.weblio.jp/"></iframe>
        <v-btn 
         @click="iframeBtn"
@@ -120,7 +118,7 @@
         class="iframe__btn">
           <v-icon> mdi-close </v-icon>
       </v-btn>
-    </div> -->
+    </div>
 
   </div>
 </template>
@@ -181,13 +179,13 @@ export default defineComponent({
     fontSettingBtn() {
       this.fontSetting == true ? (this.fontSetting = false) : (this.fontSetting = true);
     },
-    // iframeBtn() {
-    //   this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
-    // },
+    iframeBtn() {
+      this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
+    },
 
   },
   computed: {
-    article():any {
+    article() {
       return this.$store.getters["headlines/headline"];
     },
   },
