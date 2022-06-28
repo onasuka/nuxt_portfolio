@@ -50,6 +50,7 @@ type LoginInfo = {
 }
 
 interface ArticleInfo {
+  source: string,
   author: string,
   content: string,
   description: string,
@@ -71,12 +72,14 @@ interface UseInfo {
 }
 interface removeWordInfo {
   word: {
+    word: string,
+    meaning: string,
     slug: string,
   }
 }
 
 export const mutations = {
-  setUser(state, payload) {
+  setUser(state, payload:string) {
     state.user = payload;
   },
   login(state) {
@@ -85,11 +88,11 @@ export const mutations = {
   logout(state) {
     state.loggedIn = false;
   },
-  setArticle(state:any,payload:any) {
+  setArticle(state,payload:string) {
     let markitem = state.marklists
     markitem.push(payload)
   },
-  setTitle(state ,payload) {
+  setTitle(state ,payload:string) {
     let title = state.markTitles
     title.push(payload)
   },
@@ -107,25 +110,25 @@ export const mutations = {
     }
   },
 
-  setWordItem(state:any,payload:any) {
+  setWordItem(state,payload:string) {
     let wordItem = state.wordList
     let wordPieces = wordItem.length
 
     wordItem.push(payload)
   },
-  deleteWordItem(state:any){
+  deleteWordItem(state){
     state.wordList = []
   },
-  removeWordItem(state:any, payload: any) {
+  removeWordItem(state, payload: {wordNumber: string}) {
     let wordItem = state.wordList
     wordItem.splice(payload.wordNumber,1)
     console.log(wordItem)
   },
-  setQuestionWord(state ,payload) {
+  setQuestionWord(state ,payload:string) {
     let questionWord = state.questionWord
     questionWord.push(payload)
   },
-  setQuestionItem(state:any,payload:any) {
+  setQuestionItem(state ,payload:string) {
     let questionItem = state.questionList
     questionItem.push(payload)
   },
@@ -180,6 +183,7 @@ export const actions = {
     //新規ドキュメントIDを指定
     let documetId = headline.slug
     setDoc(doc(db, `${userId}`, `${documetId}`), {
+      source: headline.source,
       author: headline.author,
       content: headline.content,
       description: headline.description,
@@ -292,7 +296,7 @@ export const actions = {
       meaning: changeWord.meaning,
     });
   },
-  removeWord({commit}, removeWord) {
+  removeWord({commit}, removeWord:removeWordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.word.slug}`);
     console.log(removeWord)
     deleteDoc(removeRef);
@@ -310,7 +314,7 @@ export const actions = {
       });
     }
   },
-  questionAdd( { commit },question) {
+  questionAdd( { commit },question:WordInfo) {
     let slug = uuidv4(question.word);
     setDoc(doc(db, "user",`${userId}`,"question",`${slug}`), {
       word: question.word,
@@ -318,7 +322,7 @@ export const actions = {
     });
     // commit("setQuestionWord" , question.word)
   },
-  removeQuestion({ commit }, removeQuetiond:any) {
+  removeQuestion({ commit }, removeQuetiond:WordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"question",`${removeQuetiond.slug}`);
     deleteDoc(removeRef);
   },
