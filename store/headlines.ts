@@ -30,11 +30,10 @@ export const actions = {
 
       commit("setHeadlines", headlines)
     } catch (e) {
-      console.log("↓ここからAPIエラー！")
       console.log(e);
     }
   }, 
-  submitHeadline({ commit } , headline ) {
+  submitHeadline({ commit } , headline :string ) {
     commit("setHeadline", headline)
   },
 };
