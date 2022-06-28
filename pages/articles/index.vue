@@ -71,6 +71,11 @@ export default Vue.extend({
       this.$set(this.act, id, true);
       this.$store.dispatch("bookMarkDelete", headline);
     },
+    submitHeadline(headline: {slug: string}) {
+      this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
+        this.$router.push("/headlines/" + headline.slug);
+      });
+    },
   },
 });
 </script>
@@ -123,6 +128,10 @@ li {
 
   a {
     text-decoration: none;
+    &:hover {
+      opacity: .7;
+      text-decoration:underline;
+    }
   }
 }
 
