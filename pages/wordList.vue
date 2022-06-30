@@ -89,16 +89,18 @@
 import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
-  data: () => ({
-    newWord: "",
-    newMeaning: "",
-    dialog: false,
-    wordList: [],
-    wordQuestion: "",
-    meaningQuestion: "",
-    questionBox: false,
-    testQuestion: [],
-  }),
+  data() {
+    return {
+      newWord: "",
+      newMeaning: "",
+      dialog: false,
+      wordList: [],
+      wordQuestion: "",
+      meaningQuestion: "",
+      questionBox: false,
+      testQuestion: [],
+    };
+  },
   async asyncData({ store }) {
     let items = await store.dispatch("wordList");
     let questionItem = await store.dispatch("questionList");
@@ -130,7 +132,6 @@ export default defineComponent({
       this.newWord = "";
       this.newMeaning = "";
       this.dialog = false;
-      console.log(this.wordList)
       // return this.wordList = this.$store.state.wordList
       // this.$store.dispatch("wordList");
     },
