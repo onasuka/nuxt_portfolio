@@ -1,15 +1,9 @@
-// import { vuexfireMutations } from 'vuefire'
-// import createPersistedState from 'vuex-persistedstate'
-// export const mutations = {
-//     ...vuexfireMutations
-// }
 import { Store } from "vuex";
 import { initialiseStores } from "~/utils/store-accessor";
 const initializer = (store: Store<any>) => initialiseStores(store);
 export const plugins = [initializer];
 export * from "~/utils/store-accessor";
 
-//5/11追加分
 import { v4 as uuidv4 } from 'uuid';
 import { auth, app } from "~/plugins/firebase";
 import { EmailAuthProvider, getAuth, reauthenticateWithCredential, signInAnonymously, updateEmail, updatePassword } from "firebase/auth";
@@ -20,7 +14,6 @@ const db = getFirestore(app);
 let userId = "";
 
 auth().onAuthStateChanged(function(user) {
-  console.log(user?.uid)
   if (user) {
     return userId =user.uid
   }
@@ -44,63 +37,29 @@ export const state = () => ({
 });
 
 
-type LoginInfo = {
-  email: string
-  password: string
-}
-
-interface ArticleInfo {
-  source: string,
-  author: string,
-  content: string,
-  description: string,
-  publishedAt: string,
-  slug: string,
-  title: string,
-  url: string,
-  urlToImage: string,
-}
-interface WordInfo {
-  word: object,
-  meaning: string,
-  slug: string
-}
-interface UseInfo {
-  use: string,
-  name: string,
-  email: string,
-}
-interface removeWordInfo {
-  word: {
-    word: string,
-    meaning: string,
-    slug: string,
-  }
-}
-
 export const mutations = {
-  setUser(state, payload:string) {
+  setUser(state:{ user: string }, payload :string) {
     state.user = payload;
   },
-  login(state) {
+  login(state:{ loggedIn: boolean}) {
     state.loggedIn = true;
   },
-  logout(state) {
+  logout(state:{ loggedIn: boolean}) {
     state.loggedIn = false;
   },
-  setArticle(state,payload:string) {
+  setArticle(state: {marklists: string[][]},payload :string[]) {
     let markitem = state.marklists
     markitem.push(payload)
   },
-  setTitle(state ,payload:string) {
+  setTitle(state: {markTitles:string[][]} ,payload :string[]) {
     let title = state.markTitles
     title.push(payload)
   },
-  signOut(state) {
+  signOut(state: {markTitles:string[][]}) {
     state.markTitles = []
   },
 
-  setProfile(state, user:UseInfo) {
+  setProfile(state:{profile:UseInfo}, user:UseInfo) {
     if(user) {
       state.profile.name = user.name
       state.profile.email = user.email
@@ -110,47 +69,51 @@ export const mutations = {
     }
   },
 
-  setWordItem(state,payload:string) {
+  setWordItem(state: {wordList:WordInfo[]},payload :WordInfo) {
     let wordItem = state.wordList
-    let wordPieces = wordItem.length
-
+    console.log(payload)
     wordItem.push(payload)
   },
-  deleteWordItem(state){
+
+  deleteWordItem(state: {wordList:WordInfo[]}){
     state.wordList = []
   },
-  removeWordItem(state, payload: {wordNumber: string}) {
+
+  removeWordItem(state: {wordList:WordInfo[]}, payload: {wordNumber: number}) {
     let wordItem = state.wordList
     wordItem.splice(payload.wordNumber,1)
     console.log(wordItem)
   },
-  setQuestionWord(state ,payload:string) {
+
+  setQuestionWord(state: {questionWord:WordInfo[]} ,payload :WordInfo) {
     let questionWord = state.questionWord
+    console.log(questionWord)
     questionWord.push(payload)
   },
-  setQuestionItem(state ,payload:string) {
+
+  setQuestionItem(state: {questionList:WordInfo[]},payload:WordInfo) {
     let questionItem = state.questionList
     questionItem.push(payload)
   },
 };
 
 export const actions = {
-  signUp({ commit }, { email, password }:LoginInfo) {
+  signUp({ commit }:any, { email, password }:LoginInfo) {
     commit("login")
     return auth().createUserWithEmailAndPassword(email, password);
   },
 
-  signInWithEmail({ commit }, { email, password }:LoginInfo) {
+  signInWithEmail({ commit }:any, { email, password }:LoginInfo) {
     commit("login")
     return auth().signInWithEmailAndPassword(email, password);
   },
 
-  signInWithGoogle({ commit }) {
+  signInWithGoogle({ commit }:any) {
     commit("login")
     return auth().signInWithPopup(new auth.GoogleAuthProvider());
   },
   
-  signInWithguestsLogin({ commit }) {
+  signInWithguestsLogin({ commit }:any) {
     const getAuth = auth();
     signInAnonymously(getAuth)
     .then(() => {
@@ -163,12 +126,12 @@ export const actions = {
     });
   },
 
-  signOut({ commit }) {
+  signOut({ commit }:any) {
     commit("signOut")
     commit("setProfile")
     return auth().signOut();
   },
-  async bookMarks({ commit }) {
+  async bookMarks({ commit }:any) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       // console.log(querySnapshot.docs)
@@ -179,7 +142,7 @@ export const actions = {
       });
     }
   },
-  bookMark({ commit } , headline:ArticleInfo) {
+  bookMark({ commit }:any , headline:ArticleInfo) {
     //新規ドキュメントIDを指定
     let documetId = headline.slug
     setDoc(doc(db, `${userId}`, `${documetId}`), {
@@ -194,12 +157,12 @@ export const actions = {
       urlToImage: headline.urlToImage,
     });
   },
-  bookMarkDelete({commit}, headline:ArticleInfo) {
+  bookMarkDelete({commit}:any, headline:ArticleInfo) {
     let documetId = headline.slug
     deleteDoc(doc(db, `${userId}`,`${documetId}`));
   },
 
-  userDateUp({commit},user:UseInfo) {
+  userDateUp({commit}:any,user:UseInfo) {
     // console.log(user.email)
     let userEmail = user.email
     let userName = userEmail.substr(0, userEmail.indexOf("@"));
@@ -210,7 +173,7 @@ export const actions = {
     commit("setProfile" , {name:userName,email:userEmail})
   },
   
-  saveProfile({commit}, user:UseInfo) {
+  saveProfile({commit}:any, user:UseInfo) {
     const washingtonRef = doc(db, "profile",  `${userId}`);
     setDoc(washingtonRef, {
       name: user.name,
@@ -218,7 +181,7 @@ export const actions = {
     console.log(user.name)
     commit("setProfile" , user.name)
   },
-  async saveEmail({commit}, { newEmail, password }:{newEmail:string, password: string}) {
+  async saveEmail({commit}:any, { newEmail, password }:{newEmail:string, password: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
     console.log(newEmail)
@@ -231,6 +194,7 @@ export const actions = {
       // User re-authenticated.
       updateEmail(user, newEmail).then(() => {
         // Email updated!
+        // ...
       }).catch((error) => {
         // An error occurred
         // ...
@@ -241,7 +205,7 @@ export const actions = {
       // ...
     });
   },
-  async savePassword({ commit }, { password, newPassword }:{password:string, newPassword: string}) {
+  async savePassword({commit}:any, { password, newPassword }:{password:string, newPassword: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
     console.log(password)
@@ -268,7 +232,7 @@ export const actions = {
     });
   },
 
-  addWord({ commit }, wordItem:WordInfo) {
+  addWord({ commit }:any, wordItem:WordInfo) {
   //ランダムIDを生成
     let slug = uuidv4(wordItem.word);
     setDoc(doc(db, "user",`${userId}`,"word",`${slug}`), {
@@ -279,7 +243,7 @@ export const actions = {
     });
     commit("setWordItem" , wordItem)
   },
-  async wordList({ commit }) {
+  async wordList({ commit }:any) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"word"));
       querySnapshot.forEach((doc) => {
@@ -288,7 +252,7 @@ export const actions = {
       });
     }
   },
-  saveWord({ commit },changeWord:WordInfo) {
+  saveWord({ commit }:any,changeWord:WordInfo) {
     const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.slug}`);
     console.log(changeWord)
     updateDoc(washingtonRef, {
@@ -296,13 +260,12 @@ export const actions = {
       meaning: changeWord.meaning,
     });
   },
-  removeWord({commit}, removeWord:removeWordInfo) {
+  removeWord({ commit }:any, removeWord:RemoveWordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.word.slug}`);
-    console.log(removeWord)
     deleteDoc(removeRef);
     commit("removeWordItem",removeWord)
   },
-  async questionList({ commit }) {
+  async questionList({ commit }:any) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"question"));
       // console.log(querySnapshot.docs)
@@ -314,7 +277,8 @@ export const actions = {
       });
     }
   },
-  questionAdd( { commit },question:WordInfo) {
+  questionAdd( { commit }:any,question :WordInfo) {
+    console.log("追加")
     let slug = uuidv4(question.word);
     setDoc(doc(db, "user",`${userId}`,"question",`${slug}`), {
       word: question.word,
@@ -322,26 +286,26 @@ export const actions = {
     });
     // commit("setQuestionWord" , question.word)
   },
-  removeQuestion({ commit }, removeQuetiond:WordInfo) {
+  removeQuestion({ commit }:any, removeQuetiond: WordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"question",`${removeQuetiond.slug}`);
     deleteDoc(removeRef);
   },
 };
 
 export const getters = {
-  user(state) {
+  user(state: {user: object} ) {
     return state.user;
   },
-  isAuthenticated(state) {
+  isAuthenticated(state: {user: object} ) {
     return !!state.user;
   },
-  setTitle(state) {
+  setTitle(state: {markTitles: string[]}) {
     return state.markTitles;
   },
-  wordList(state) {
+  wordList(state: {wordList: WordInfo[]}) {
     return state.wordList
   },
-  questionWord(state) {
+  questionWord(state: {questionWord: WordInfo[]}) {
     return state.questionWord
   },
 };

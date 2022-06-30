@@ -1,51 +1,53 @@
 import moment from "moment";
+import { $axios } from '~/utils/api'
+
 export const state = () => ({
   headlines: [],
   headline: null,
 });
 
 export const mutations = {
-  setHeadlines(state, payload) {
+  setHeadlines(state:any, payload:{length: number,publishedAt: string}) {
     state.headlines = payload
-    // console.log(payload + "読み込めているよ")
+    console.log(state)
+    console.log(payload)
     for (let i = 0; i < payload.length; i++) {
       state.headlines[i].publishedAt = moment(payload.publishedAt).format("YYYY年M月D日")
     }
   }, 
-  setHeadline(state, payload) {
+  setHeadline(state:{headline:string}, payload:string) {
     state.headline = payload
   },
 };
 
 export const actions = {
-  async loadHeadlines({ commit } , payload) {
+  async loadHeadlines({ commit }:any , payload:string) {
     try {
-      let { articles } = await this.$axios.$get(payload);
+      let { articles } = await $axios.$get(payload);
       // console.log(articles)
-      let headlines = articles.map((article) => {
+      let headlines = articles.map((article:{title: string,publishedAt: string}) => {
         const slug = article.title.substring(0, 5) + article.publishedAt.substring(0,4)
         const headline = { ...article, slug }
         return headline;
       });
-
       commit("setHeadlines", headlines)
     } catch (e) {
       console.log(e);
     }
   }, 
-  submitHeadline({ commit } , headline :string ) {
+  submitHeadline({ commit }:any , headline :string ) {
     commit("setHeadline", headline)
   },
 };
 
 export const getters = {
-  headlines(state ) {
+  headlines(state:{headlines: string} ) {
     return state.headlines
   }, 
-  headline(state ) {
+  headline(state:{headline: string}  ) {
     return state.headline
   },
-  authUser(state ) {
+  authUser(state:{authUser: string}  ) {
     return state.authUser
   },
 };

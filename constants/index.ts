@@ -36,3 +36,17 @@ type RemoveWordInfo = {
     isEditing: boolean
   };
 };
+
+type Headlines = {
+  headlines: {
+    author: string;
+    content: string;
+    description: string;
+    publishedAt: string;
+    slug: string;
+    source: string;
+    title: string;
+    url: string;
+    urlToImage: string;
+  }
+};
