@@ -32,12 +32,22 @@
           <p class="mb-0 word__text">{{ wordItem.word }}</p>
           <small>意味</small>
           <p class="mt-0">{{ wordItem.meaning }}</p>
+          {{ wordItem.slug }}
         </div>
         <div>
           <v-btn
+            v-if="questionBoolen[index]"
+            color="red"
+            dark
+              @click="questionDelete(wordItem,index)"
+          >
+            問題削除
+          </v-btn>
+          <v-btn
+            v-else
             color="blue"
             dark
-              @click="questionAdd(wordItem)"
+              @click="questionAdd(wordItem,index)"
           >
             問題追加
           </v-btn>
@@ -94,25 +104,18 @@ export default defineComponent({
       newWord: "",
       newMeaning: "",
       dialog: false,
-      wordList: [],
+      wordList: this.$store.state.wordList,
       wordQuestion: "",
       meaningQuestion: "",
       questionBox: false,
       testQuestion: [],
+      questionBoolen:[]
     };
   },
   async asyncData({ store }) {
-    let items = await store.dispatch("wordList");
     let questionItem = await store.dispatch("questionList");
-    return {
-      wordList: store.state.wordList,
-    };
   },
   methods: {
-    // 英単語削除
-    remove(index: number) {
-      this.wordList.splice(index, 1);
-    },
     edit(index: number) {
       this.wordList[index].isEditing == true
         ? (this.wordList[index].isEditing = false)
@@ -132,7 +135,7 @@ export default defineComponent({
       this.newWord = "";
       this.newMeaning = "";
       this.dialog = false;
-      // return this.wordList = this.$store.state.wordList
+      return this.wordList = this.$store.state.wordList
       // this.$store.dispatch("wordList");
     },
     cancelWord() {
@@ -150,28 +153,32 @@ export default defineComponent({
        wordNumber: index
       });
     },
-    questionAdd(wordItem: { word:string, meaning: string}) {
+    questionAdd(wordItem: { word:string, meaning: string, slug:string},index:number) {
       const result = window.confirm("テスト問題に追加しますか？")
       if(result) {
+        this.$set(this.questionBoolen, index, true);
         this.$store.dispatch("questionAdd", {
           word: wordItem.word,
           meaning: wordItem.meaning,
+          slug:  wordItem.slug,
         });
       }
     },
-    removeQuestion(index: number) {
-      this.$store.dispatch("removeQuestion", this.wordList[index]);
+    questionDelete(wordItem: { word:string, meaning: string, slug:string}, index: number) {
+      this.$set(this.questionBoolen, index, false);
+      this.$store.dispatch("questionDelete", wordItem);
     },
   },
-  mounted() {
+  created() {
     let questionWords = this.$store.getters.questionWord;
     let headlines = this.wordList;
     for (let i = 0; i < headlines.length; i++) {
       let headlineTitle = headlines[i].word;
-      let act = this.testQuestion;
+      let questionBoolen:boolean[] = this.questionBoolen;
       questionWords.filter(function (value: string) {
+        // console.log(value)
         if (value === headlineTitle) {
-          act[i] = true;
+          questionBoolen[i] = true;
         }
       });
     }
@@ -180,6 +187,9 @@ export default defineComponent({
     watchWord() {
       this.wordList = this.$store.state.wordList;
     },
+    watchBolle() {
+      this.questionBoolen
+    }
   },
 });
 </script>
