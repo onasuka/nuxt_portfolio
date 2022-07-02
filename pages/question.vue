@@ -45,7 +45,7 @@ export default defineComponent({
     };
   },
   async asyncData({ store }: any) {
-    let items = await store.dispatch("questionList");
+    let items = await store.dispatch("problemList");
     return {
       questionList: store.state.questionList,
     };
