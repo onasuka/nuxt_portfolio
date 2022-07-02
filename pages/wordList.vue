@@ -85,7 +85,7 @@
         </div>
 
         <div class="mb-5">
-          <v-btn color="primary" @click="saveWord(index)"> 保存 </v-btn>
+          <v-btn color="primary" @click="saveWord(wordItem,index)"> 保存 </v-btn>
           <v-btn class="white--text" color="red" @click="edit(index)">
             キャンセル
           </v-btn>
@@ -143,14 +143,20 @@ export default defineComponent({
       this.newWord = "";
       this.newMeaning = "";
     },
-    saveWord(index: number) {
-      this.$store.dispatch("saveWord", this.wordList[index]);
+    saveWord(wordItem: { word:string, meaning: string, slug:string},index: number) {
+      this.$store.dispatch("saveWord", {
+        wordInfo:this.wordList[index],
+        wordNum: index,
+        slug: wordItem.slug
+      });
       this.edit(index);
     },
     removeWord(index: number) {
       this.$store.dispatch("removeWord", {
        word: this.wordList[index],
        wordNumber: index
+      }).then(() => {
+          this.questionBoolen.splice(1,index)
       });
     },
     questionAdd(wordItem: { word:string, meaning: string, slug:string},index:number) {

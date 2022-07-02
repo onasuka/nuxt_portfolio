@@ -73,6 +73,10 @@ export const mutations = {
     let copyWordList = state.wordList
     copyWordList.push(payload)
   },
+  changeWordItem(state: {wordList:ChangeSetWordInfo[]} ,payload :ChangeWordInfo) {
+    let copyWordList = state.wordList
+    copyWordList[payload.wordNum] = payload.wordInfo
+  },
 
   deleteWordItem(state: {wordList:WordInfo[]}){
     state.wordList = []
@@ -248,7 +252,6 @@ export const actions = {
       isEditing: false,
       slug:slug
     });
-    // console.log(registeredContent)
     commit("setWordItem" , registeredContent)
   },
   async wordList({ commit }:any) {
@@ -260,13 +263,13 @@ export const actions = {
       });
     }
   },
-  saveWord({ commit }:any,changeWord:WordInfo) {
+  saveWord({ commit }:any,changeWord:ChangeWordInfo) {
     const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.slug}`);
-    console.log(changeWord)
-    updateDoc(washingtonRef, {
-      word: changeWord.word,
-      meaning: changeWord.meaning,
-    });
+    updateDoc (washingtonRef, {
+      word: changeWord.wordInfo.word,
+      meaning: changeWord.wordInfo.meaning,
+    })
+    commit("changeWordItem" , changeWord)
   },
   removeWord({ commit }:any, removeWord:RemoveWordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.word.slug}`);
