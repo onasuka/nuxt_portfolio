@@ -15,17 +15,17 @@ type ArticleInfo = {
   urlToImage: string;
 };
 
+type UseInfo = {
+  use: string;
+  name: string;
+  email: string;
+};
+
 type WordInfo = {
   word: object;
   meaning: string;
   slug: string;
   isEditing: boolean
-};
-
-type UseInfo = {
-  use: string;
-  name: string;
-  email: string;
 };
 
 type RemoveWordInfo = {
@@ -37,6 +37,18 @@ type RemoveWordInfo = {
   };
 };
 
+type ChangeWordInfo = {
+  wordInfo: {
+    word: string;
+    meaning: string;
+  };
+  wordNum: number
+};
+
+type ChangeSetWordInfo = {
+  word:string;
+  meaning: string;
+}
 type Headlines = {
   headlines: {
     author: string;

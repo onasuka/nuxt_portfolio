@@ -47,15 +47,15 @@ export const mutations = {
   logout(state:{ loggedIn: boolean}) {
     state.loggedIn = false;
   },
-  setArticle(state: {marklists: string[][]},payload :string[]) {
-    let markitem = state.marklists
-    markitem.push(payload)
+  setArticle(state: {marklists: Headlines[]},payload :Headlines) {
+    let copyMarklists = state.marklists
+    copyMarklists.push(payload)
   },
-  setTitle(state: {markTitles:string[][]} ,payload :string[]) {
-    let title = state.markTitles
-    title.push(payload)
+  setTitle(state: {markTitles:Headlines[]} ,payload :Headlines) {
+    let copyMarkTitles = state.markTitles
+    copyMarkTitles.push(payload)
   },
-  signOut(state: {markTitles:string[][]}) {
+  signOut(state: {markTitles:Headlines[]}) {
     state.markTitles = []
   },
 
@@ -70,9 +70,12 @@ export const mutations = {
   },
 
   setWordItem(state: {wordList:WordInfo[]},payload :WordInfo) {
-    let wordItem = state.wordList
-    console.log(payload)
-    wordItem.push(payload)
+    let copyWordList = state.wordList
+    copyWordList.push(payload)
+  },
+  changeWordItem(state: {wordList:ChangeSetWordInfo[]} ,payload :ChangeWordInfo) {
+    let copyWordList = state.wordList
+    copyWordList[payload.wordNum] = payload.wordInfo
   },
 
   deleteWordItem(state: {wordList:WordInfo[]}){
@@ -80,20 +83,22 @@ export const mutations = {
   },
 
   removeWordItem(state: {wordList:WordInfo[]}, payload: {wordNumber: number}) {
-    let wordItem = state.wordList
-    wordItem.splice(payload.wordNumber,1)
-    console.log(wordItem)
+    let copyWordList = state.wordList
+    copyWordList.splice(payload.wordNumber,1)
   },
 
   setQuestionWord(state: {questionWord:WordInfo[]} ,payload :WordInfo) {
-    let questionWord = state.questionWord
-    console.log(questionWord)
-    questionWord.push(payload)
+    let copyQuestionWord = state.questionWord
+    copyQuestionWord.push(payload)
   },
 
   setQuestionItem(state: {questionList:WordInfo[]},payload:WordInfo) {
-    let questionItem = state.questionList
-    questionItem.push(payload)
+    let copyQuestionList = state.questionList
+    copyQuestionList.push(payload)
+  },
+  setProblemWord(state: {questionList:WordInfo[]},payload:WordInfo) {
+    let copyQuestionList = state.questionList
+    copyQuestionList.push(payload)
   },
 };
 
@@ -235,13 +240,19 @@ export const actions = {
   addWord({ commit }:any, wordItem:WordInfo) {
   //ランダムIDを生成
     let slug = uuidv4(wordItem.word);
+    let registeredContent = {
+      word: wordItem.word,
+      meaning: wordItem.meaning,
+      isEditing: false,
+      slug:slug
+    }
     setDoc(doc(db, "user",`${userId}`,"word",`${slug}`), {
       word: wordItem.word,
       meaning: wordItem.meaning,
       isEditing: false,
       slug:slug
     });
-    commit("setWordItem" , wordItem)
+    commit("setWordItem" , registeredContent)
   },
   async wordList({ commit }:any) {
     if(userId) {
@@ -252,13 +263,13 @@ export const actions = {
       });
     }
   },
-  saveWord({ commit }:any,changeWord:WordInfo) {
+  saveWord({ commit }:any,changeWord:ChangeWordInfo) {
     const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.slug}`);
-    console.log(changeWord)
-    updateDoc(washingtonRef, {
-      word: changeWord.word,
-      meaning: changeWord.meaning,
-    });
+    updateDoc (washingtonRef, {
+      word: changeWord.wordInfo.word,
+      meaning: changeWord.wordInfo.meaning,
+    })
+    commit("changeWordItem" , changeWord)
   },
   removeWord({ commit }:any, removeWord:RemoveWordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"word",`${removeWord.word.slug}`);
@@ -272,21 +283,32 @@ export const actions = {
       querySnapshot.forEach((doc) => {
         let questionItem = doc.data()
         // console.log(questionItem.word)
-        commit("setQuestionItem" , questionItem)
         commit("setQuestionWord" , questionItem.word)
       });
     }
   },
-  questionAdd( { commit }:any,question :WordInfo) {
-    console.log("追加")
-    let slug = uuidv4(question.word);
-    setDoc(doc(db, "user",`${userId}`,"question",`${slug}`), {
+  async problemList({ commit }:any) {
+    if(userId) {
+      const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"question"));
+      // console.log(querySnapshot.docs)
+      querySnapshot.forEach((doc) => {
+        let questionItem = doc.data()
+        // console.log(questionItem.word)
+        commit("setProblemWord" , questionItem)
+      });
+    }
+  },
+  questionAdd( { commit }:any, question :WordInfo) {
+    console.log(question)
+    setDoc(doc(db, "user",`${userId}`,"question",`${question.slug}`), {
       word: question.word,
       meaning: question.meaning,
+      slug: question.slug
     });
-    // commit("setQuestionWord" , question.word)
+    commit("setQuestionItem" , question)
+    commit("setQuestionWord" , question.word)
   },
-  removeQuestion({ commit }:any, removeQuetiond: WordInfo) {
+  questionDelete({ commit }:any, removeQuetiond: WordInfo) {
     const removeRef = doc(db, "user",`${userId}`,"question",`${removeQuetiond.slug}`);
     deleteDoc(removeRef);
   },

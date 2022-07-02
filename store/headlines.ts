@@ -9,8 +9,6 @@ export const state = () => ({
 export const mutations = {
   setHeadlines(state:any, payload:{length: number,publishedAt: string}) {
     state.headlines = payload
-    console.log(state)
-    console.log(payload)
     for (let i = 0; i < payload.length; i++) {
       state.headlines[i].publishedAt = moment(payload.publishedAt).format("YYYY年M月D日")
     }
@@ -24,7 +22,6 @@ export const actions = {
   async loadHeadlines({ commit }:any , payload:string) {
     try {
       let { articles } = await $axios.$get(payload);
-      // console.log(articles)
       let headlines = articles.map((article:{title: string,publishedAt: string}) => {
         const slug = article.title.substring(0, 5) + article.publishedAt.substring(0,4)
         const headline = { ...article, slug }
