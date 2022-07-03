@@ -47,9 +47,17 @@ export const mutations = {
   logout(state:{ loggedIn: boolean}) {
     state.loggedIn = false;
   },
-  setArticle(state: {marklists: Headlines[]},payload :Headlines) {
+  setArticle(state: {marklists: ArticleInfo[]},payload:ArticleInfo) {
     let copyMarklists = state.marklists
-    copyMarklists.push(payload)
+    let getMarkList = payload
+    console.log(getMarkList)
+    for (var i = 0; i < copyMarklists.length; i++) {
+      if(copyMarklists[i].title !== payload.title) {
+        copyMarklists.push(payload)
+      }
+      console.log("いキマシタワー")
+    }
+    // copyMarklists.push(payload)
   },
   setTitle(state: {markTitles:Headlines[]} ,payload :Headlines) {
     let copyMarkTitles = state.markTitles

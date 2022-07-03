@@ -49,6 +49,7 @@ type ChangeSetWordInfo = {
   word:string;
   meaning: string;
 }
+
 type Headlines = {
   headlines: {
     author: string;
@@ -61,4 +62,4 @@ type Headlines = {
     url: string;
     urlToImage: string;
   }
-};
+}
