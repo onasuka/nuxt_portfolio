@@ -47,9 +47,13 @@ export const mutations = {
   logout(state:{ loggedIn: boolean}) {
     state.loggedIn = false;
   },
-  setArticle(state: {marklists: Headlines[]},payload :Headlines) {
-    let copyMarklists = state.marklists
+  setArticle(state: {marklists: ArticleInfo[]},payload:ArticleInfo) {
+    let copyMarklists = state.marklists    
     copyMarklists.push(payload)
+  },
+  deleteArticle(state: {marklists: ArticleInfo[]}) {
+    let copyMarklists = state.marklists    
+    copyMarklists.splice(0)
   },
   setTitle(state: {markTitles:Headlines[]} ,payload :Headlines) {
     let copyMarkTitles = state.markTitles
@@ -138,6 +142,7 @@ export const actions = {
   },
   async bookMarks({ commit }:any) {
     if(userId) {
+      commit("deleteArticle")
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       // console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
