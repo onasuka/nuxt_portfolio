@@ -48,16 +48,12 @@ export const mutations = {
     state.loggedIn = false;
   },
   setArticle(state: {marklists: ArticleInfo[]},payload:ArticleInfo) {
-    let copyMarklists = state.marklists
-    let getMarkList = payload
-    console.log(getMarkList)
-    for (var i = 0; i < copyMarklists.length; i++) {
-      if(copyMarklists[i].title !== payload.title) {
-        copyMarklists.push(payload)
-      }
-      console.log("いキマシタワー")
-    }
-    // copyMarklists.push(payload)
+    let copyMarklists = state.marklists    
+    copyMarklists.push(payload)
+  },
+  deleteArticle(state: {marklists: ArticleInfo[]}) {
+    let copyMarklists = state.marklists    
+    copyMarklists.splice(0)
   },
   setTitle(state: {markTitles:Headlines[]} ,payload :Headlines) {
     let copyMarkTitles = state.markTitles
@@ -146,6 +142,7 @@ export const actions = {
   },
   async bookMarks({ commit }:any) {
     if(userId) {
+      commit("deleteArticle")
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       // console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
