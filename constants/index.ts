@@ -24,7 +24,7 @@ type UseInfo = {
 type WordInfo = {
   word: object;
   meaning: string;
-  slug: string;
+  id: string;
   isEditing: boolean
 };
 
@@ -32,7 +32,7 @@ type RemoveWordInfo = {
   word: {
     word: string;
     meaning: string;
-    slug: string;
+    id: string;
     isEditing: boolean
   };
 };

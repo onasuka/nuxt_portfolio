@@ -6,7 +6,6 @@ export default ({ store }) => {
     paths: [
       'headlines.headline',
       'loggedIn',
-      'wordList',
       'profile'
     ]
   })(store)
