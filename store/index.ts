@@ -101,9 +101,9 @@ export const mutations = {
     let copyQuestionList = state.questionList
     copyQuestionList.push(payload)
   },
-  setProblemWord(state: {questionList:WordInfo[]},payload:WordInfo) {
+  deleteQuestionItem(state: {questionList:WordInfo[]}) {
     let copyQuestionList = state.questionList
-    copyQuestionList.push(payload)
+    copyQuestionList.splice(0)
   },
 };
 
@@ -283,7 +283,7 @@ export const actions = {
     deleteDoc(removeRef);
     commit("removeWordItem",removeWord)
   },
-  async questionList({ commit }:any) {
+  async questionWordId({ commit }:any) {
     if(userId) {
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"question"));
       querySnapshot.forEach((doc) => {
@@ -292,12 +292,13 @@ export const actions = {
       });
     }
   },
-  async problemList({ commit }:any) {
+  async questionList({ commit }:any) {
     if(userId) {
+      commit("deleteQuestionItem")
       const querySnapshot = await getDocs(collection(db, "user",`${userId}`,"question"));
       querySnapshot.forEach((doc) => {
         let questionItem = doc.data()
-        commit("setProblemWord" , questionItem)
+        commit("setQuestionItem" , questionItem)
       });
     }
   },
