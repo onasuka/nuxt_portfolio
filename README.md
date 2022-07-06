@@ -2,22 +2,10 @@
 
 ## アプリURL
 
-```bash
-# install dependencies
-$ npm install
+## アプリ内容
+![20220707_003322 (1) (1)](https://user-images.githubusercontent.com/80244060/177610308-e24b9cf2-3b0b-4bba-a023-28a6cc332dcf.gif)
 
-# serve with hot reload at localhost:3000
-$ npm run dev
 
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
 
 ## 仕様技術
 
