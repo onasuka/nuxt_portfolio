@@ -35,6 +35,7 @@
 import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
+  middleware: 'auth',
   data() {
     return {
       number: 0,

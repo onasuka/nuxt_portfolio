@@ -72,7 +72,6 @@ export default {
       pageSize: 10,
       bookMarkTitle: [],
       bookMarkDecision: [],
-      loggedIn: this.$store.state.loggedIn,
     };
   },
 
@@ -87,6 +86,9 @@ export default {
   computed: {
     filterPages() {
       return this.$store.getters["headlines/headlines"];
+    },
+    loggedIn() {
+      return this.$store.state.loggedIn
     },
   },
   methods: {
