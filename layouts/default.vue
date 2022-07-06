@@ -99,8 +99,6 @@ export default {
   },
   data () {
     return {
-      userName: this.$store.state.profile.name,
-      loggedIn: this.$store.state.loggedIn,
       clipped: false,
       drawer: false,
       fixed: false,
@@ -136,7 +134,15 @@ export default {
       rightDrawer: false,
       title: '英語アプリ'
     }
-  }
+  },
+  computed: {
+    userName() {
+      return this.$store.state.profile.name
+    },
+    loggedIn() {
+      return this.$store.state.loggedIn
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>

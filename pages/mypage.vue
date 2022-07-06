@@ -161,6 +161,7 @@
 <script lang="ts">
 import Vue from "vue";
 export default Vue.extend({
+  middleware: 'auth',
   data() {
     return {
       password: "",
