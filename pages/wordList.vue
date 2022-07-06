@@ -103,6 +103,7 @@ export default defineComponent({
       newMeaning: "",
       dialog: false,
       wordList: [{
+        id: "",
         isEditing:false
       }],
       wordQuestion: "",
@@ -187,7 +188,7 @@ export default defineComponent({
   },
   created() {
     let questionWordsId = this.$store.getters.questionWordId;
-    let headlines:{id: string}[] = this.wordList;
+    let headlines = this.wordList;
     for (let i = 0; i < headlines.length; i++) {
       let headlineId = headlines[i].id;
       let questionBoolen:boolean[] = this.questionBoolen;
