@@ -15,7 +15,7 @@
         <div>
           <p class="questions__ttl">単語テスト</p>
           <p class="mb-2">第{{ number + 1 }}問</p>
-          <h4>{{ currentQuestion.word }}の意味は？</h4>
+          <h4>{{ this.questionList[this.number].word }}の意味は？</h4>
           <v-textarea v-model="answer" auto-grow class="pa-0" rows="1"></v-textarea>
           <v-btn @click="selectAnswer(answer)" block> 回答する </v-btn>
 
@@ -40,12 +40,14 @@ export default defineComponent({
       number: 0,
       status: true,
       correctCount: 0,
-      questionList:[],
-      answer: ""
+      questionList:[{
+        meaning:""
+      }],
+      answer: "",
     };
   },
   async asyncData({ store }: any) {
-    let items = await store.dispatch("problemList");
+    let items = await store.dispatch("questionList");
     return {
       questionList: store.state.questionList,
     };
@@ -56,22 +58,17 @@ export default defineComponent({
       if(this.answer == "") return;
       if (this.answer == this.questionList[this.number].meaning) {
         this.correctCount++;
-        console.log("正解！")
-        alert("正解");
+        alert("正解!");
       } else {
          alert("不正解！答えは"+ `${this.questionList[this.number].meaning}`);
       }
       this.number++;
-      questionLength--;
-      console.log(questionLength)
-      if (questionLength == 0) {
+      this.answer = "";
+      let questionsNumber = questionLength - this.number;
+
+      if (questionsNumber == 0) {
         this.status = false;
       }
-    },
-  },
-  computed: {
-    currentQuestion() {
-      return this.questionList[this.number];
     },
   },
 });

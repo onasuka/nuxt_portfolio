@@ -113,7 +113,7 @@ export default defineComponent({
     };
   },
   async asyncData({ store }) {
-    let questionItem = await store.dispatch("questionList");
+    let questionItem = await store.dispatch("questionWordId");
     let wordItem = await store.dispatch("wordList")
     return {
       wordList: store.state.wordList
