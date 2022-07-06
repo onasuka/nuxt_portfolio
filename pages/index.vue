@@ -68,9 +68,7 @@ export default {
       page: 1,
       length: 0,
       lists: [],
-      viewLists: [{
-        title:""
-      }],
+      viewLists: [],
       pageSize: 10,
       bookMarkTitle: [],
       bookMarkDecision: [],
