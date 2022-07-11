@@ -55,7 +55,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
+<script>
 import homeMenu from "~/components/home/homeMenu.vue";
 import homeSearch from "~/components/home/homeSearch.vue";
 export default {
@@ -92,12 +92,12 @@ export default {
     },
   },
   methods: {
-    submitHeadline(headline: {slug: string}) {
+    submitHeadline(headline) {
       this.$store.dispatch("headlines/submitHeadline", headline).then(() => {
         this.$router.push("/headlines/" + headline.slug);
       });
     },
-    pageChange(pageNumber: number) {
+    pageChange(pageNumber) {
       this.viewLists = this.lists.slice(
         this.pageSize * (pageNumber - 1),
         this.pageSize * pageNumber
@@ -105,11 +105,11 @@ export default {
       // ページ番号2が押された場合　this.lists.slice(10,20) 10から20までを表示
       //最初のページ(1)の場合 this.lists.slice(0,10) 0から10までを表示
     },
-    favorite(headline:string, id: number) {
+    favorite(headline, id) {
       this.$set(this.bookMarkDecision, id, true);
       this.$store.dispatch("bookMark", headline);
     },
-    favoriteDelete(headline: string, id: number) {
+    favoriteDelete(headline, id) {
       this.$set(this.bookMarkDecision, id, false);
       this.$store.dispatch("bookMarkDelete", headline);
     },
@@ -125,8 +125,8 @@ export default {
     // ブックマークされているか否かの判定
     for (let i = 0; i < headlines.length; i++) {
       let headlineTitle = headlines[i].title;
-      let bookMarkDecision:boolean[] = this.bookMarkDecision;
-      bookMarksTitle.filter(function (value: string) {
+      let bookMarkDecision = this.bookMarkDecision;
+      bookMarksTitle.filter(function (value) {
         if (value === headlineTitle) {
           bookMarkDecision[i] = true;
         }
