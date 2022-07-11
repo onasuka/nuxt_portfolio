@@ -158,7 +158,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from "vue";
 export default Vue.extend({
   middleware: 'auth',
@@ -180,7 +180,7 @@ export default Vue.extend({
       changeProfile_valid: true,
       show_Password: false,
       emailRules: [
-        (v:string) => {
+        (v) => {
           if (v) {
             return (
               /.+@.+\..+/.test(v) || "有効なメールアドレスを入力してください"
@@ -191,7 +191,7 @@ export default Vue.extend({
         },
       ],
       changePasswordAgainRules: [
-        (v:string) => {
+        (v) => {
           if (v) {
             return (
               this.$refs.changePassword.value === v ||
@@ -203,7 +203,7 @@ export default Vue.extend({
         },
       ],
       nowPasswordRules: [
-         (v:any) => !!v || 'パスワードを入力してください',
+         (v) => !!v || 'パスワードを入力してください',
       ]
     };
   },
@@ -221,7 +221,7 @@ export default Vue.extend({
           : (this.editProfile = true);
       this.isVisible = false;
     },
-    signOut(err:string) {
+    signOut(err) {
       this.$store
         .dispatch("signOut")
         .then(() => {
@@ -247,7 +247,7 @@ export default Vue.extend({
         this.$store.dispatch('saveProfile',{name: this.profile.name})
       }
     },
-    saveEmail(password:string) {
+    saveEmail(password) {
       let newEmail = this.profile.email;
       console.log(newEmail);
       this.$store.dispatch("saveEmail", { newEmail, password });
