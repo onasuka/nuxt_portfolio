@@ -1,11 +1,15 @@
 # 英語アプリ
 
 ## アプリURL
+https://english-article-adee4.web.app/
 
 ## アプリ内容
 ![20220707_003322 (1) (1)](https://user-images.githubusercontent.com/80244060/177610308-e24b9cf2-3b0b-4bba-a023-28a6cc332dcf.gif)
 
 
+|ゲストログインのユーザー情報画面時|メールアドレスでログインのユーザー情報画面時|
+|---|---|
+|![FireShot Capture 003 - 20220302_app - localhost](https://user-images.githubusercontent.com/80244060/178282316-4b4ab7f2-e2ce-440c-88b5-bfc6825684eb.png)|![FireShot Capture 002 - 20220302_app - localhost](https://user-images.githubusercontent.com/80244060/178282266-bea77361-d5ea-47e2-a234-e57c859a7039.png)|
 
 ## 仕様技術
 
