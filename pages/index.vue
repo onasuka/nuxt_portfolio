@@ -68,7 +68,9 @@ export default {
       page: 1,
       length: 0,
       lists: [],
-      viewLists: [],
+      viewLists: [{
+        title:""
+      }],
       pageSize: 10,
       bookMarkTitle: [],
       bookMarkDecision: [],
@@ -125,7 +127,7 @@ export default {
     // ブックマークされているか否かの判定
     for (let i = 0; i < headlines.length; i++) {
       let headlineTitle = headlines[i].title;
-      let bookMarkDecision = this.bookMarkDecision;
+      let bookMarkDecision:boolean[] = this.bookMarkDecision;
       bookMarksTitle.filter(function (value: string) {
         if (value === headlineTitle) {
           bookMarkDecision[i] = true;

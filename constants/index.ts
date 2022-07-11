@@ -41,6 +41,7 @@ type ChangeWordInfo = {
   wordInfo: {
     word: string;
     meaning: string;
+    id:string
   };
   wordNum: number
 };

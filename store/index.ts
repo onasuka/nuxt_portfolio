@@ -271,7 +271,7 @@ export const actions = {
     }
   },
   saveWord({ commit }:any,changeWord:ChangeWordInfo) {
-    const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.id}`);
+    const washingtonRef = doc(db, "user",`${userId}`,"word",`${changeWord.wordInfo.id}`);
     updateDoc (washingtonRef, {
       word: changeWord.wordInfo.word,
       meaning: changeWord.wordInfo.meaning,
