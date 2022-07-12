@@ -63,7 +63,18 @@ export const mutations = {
     state.markTitles = []
   },
 
-  setProfile(state:{profile:UseInfo}, user:UseInfo) {
+  setProfile(state:{profile:UseInfo}, user:string) {
+    if(user) {
+      state.profile.name = user
+    } else {
+      state.profile.name = "ゲスト"
+      state.profile.email = ""
+    }
+  },
+  setEmail(state:{profile:UseInfo}, user:string) {
+      state.profile.email = user
+  },
+  addProfile(state:{profile:UseInfo}, user:UseInfo) {
     if(user) {
       state.profile.name = user.name
       state.profile.email = user.email
@@ -145,7 +156,6 @@ export const actions = {
     if(userId) {
       commit("deleteArticle")
       const querySnapshot = await getDocs(collection(db, `${userId}`));
-      // console.log(querySnapshot.docs)
       querySnapshot.forEach((doc) => {
         let marksitem = doc.data()
         commit("setArticle" , marksitem)
@@ -174,14 +184,13 @@ export const actions = {
   },
 
   userDateUp({commit}:any,user:UseInfo) {
-    // console.log(user.email)
     let userEmail = user.email
     let userName = userEmail.substr(0, userEmail.indexOf("@"));
     setDoc(doc(db, "profile", `${userId}`), {
       name: userName,
       email: userEmail,
     });
-    commit("setProfile" , {name:userName,email:userEmail})
+    commit("addProfile" , {name:userName,email:userEmail})
   },
   
   saveProfile({commit}:any, user:UseInfo) {
@@ -189,13 +198,11 @@ export const actions = {
     setDoc(washingtonRef, {
       name: user.name,
     }, {merge: true});
-    console.log(user.name)
     commit("setProfile" , user.name)
   },
   async saveEmail({commit}:any, { newEmail, password }:{newEmail:string, password: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
-    console.log(newEmail)
     // const credential = promptForCredentials();
     const credential = EmailAuthProvider.credential(
       user?.email ?? "",
@@ -205,6 +212,11 @@ export const actions = {
       // User re-authenticated.
       updateEmail(user, newEmail).then(() => {
         // Email updated!
+        const washingtonRef = doc(db, "profile",  `${userId}`);
+        setDoc(washingtonRef, {
+          email: newEmail,
+        }, {merge: true});
+        commit("setEmail",newEmail)
         // ...
       }).catch((error) => {
         // An error occurred
@@ -213,13 +225,13 @@ export const actions = {
     }).catch((error) => {
       // An error ocurred
       console.log(error)
+      alert("パスワードが間違っています。");
       // ...
     });
   },
   async savePassword({commit}:any, { password, newPassword }:{password:string, newPassword: string}) {
     const auth = getAuth();
     const user = auth.currentUser;    
-    console.log(password)
     // const credential = promptForCredentials();
     const credential = EmailAuthProvider.credential(
       user?.email ?? "",
@@ -229,16 +241,14 @@ export const actions = {
       // User re-authenticated.
       updatePassword(user, newPassword).then(() => {
         // Update successful.
-        console.log("通った")
-
       }).catch((error) => {
         // An error occurred
         // ...
       });
     }).catch((error) => {
       // An error ocurred
-      console.log("通ってない")
       console.log(error)
+      alert("パスワードが間違っています。");
       // ...
     });
   },
@@ -303,7 +313,6 @@ export const actions = {
     }
   },
   questionAdd( { commit }:any, question :WordInfo) {
-    console.log(question)
     setDoc(doc(db, "user",`${userId}`,"question",`${question.id}`), {
       word: question.word,
       meaning: question.meaning,

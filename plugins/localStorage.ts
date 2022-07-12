@@ -6,7 +6,8 @@ export default ({ store }:any) => {
     paths: [
       'headlines.headline',
       'loggedIn',
-      'profile'
+      'profile',
+      'user'
     ]
   })(store)
 }
