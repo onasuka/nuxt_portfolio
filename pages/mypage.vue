@@ -30,7 +30,6 @@
         </div>
         <v-form
           class="py-2"
-          ref="changeProfile_form"
           v-if="editProfile"
           v-model="changeProfile_valid"
           lazy-validation
@@ -69,10 +68,10 @@
         </v-form>
         <div v-else class="pa-6 text-center">
           <small>アカウント名</small>
-          <p class="mb-0 mb-3">{{ profile.name }}</p>
+          <p class="mb-0 mb-3">{{ this.profile.name }}</p>
           <div v-if="profile.email">
             <small>Email</small>
-            <p class="mb-0">{{ profile.email }}</p>
+            <p class="mb-0">{{ this.profile.email }}</p>
           </div>
         </div>
         <v-divider></v-divider>
@@ -237,25 +236,30 @@ export default Vue.extend({
     saveProfile() {
       let newEmail = this.profile.email;
       let userEmail = this.$store.state.profile.email;
-      if (this.$refs.changeProfile_form) {
+      if(newEmail) {
         if (newEmail !== userEmail) {
-          console.log("現在：" + newEmail);
-          console.log("過去：" + userEmail);
-          console.log("変わったよ");
           this.isVisible = true;
         }
-        this.$store.dispatch('saveProfile',{name: this.profile.name})
       }
+      this.$store.dispatch('saveProfile',{name: this.profile.name})
+      .then(() => {
+        this.editProfile = false
+      })
     },
     saveEmail(password) {
       let newEmail = this.profile.email;
-      console.log(newEmail);
-      this.$store.dispatch("saveEmail", { newEmail, password });
+      this.$store.dispatch("saveEmail", { newEmail, password })
+      .then(() => {
+        this.isVisible = false
+      })
     },
     savePassword() {
       let password = this.nowPassword
       let newPassword = this.changePassword
-      this.$store.dispatch("savePassword", { password, newPassword });
+      this.$store.dispatch("savePassword", { password, newPassword })
+      .then(() => {
+        this.isPasswordBox = false
+      })
     },
     isPassword() {
        this.isPasswordBox == true ? this.isPasswordBox = false : this.isPasswordBox = true
@@ -287,14 +291,14 @@ export default Vue.extend({
     opacity: 0.46;
     z-index: 999;
   }
-}
-.password__box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 55%;
-  border-top: solid 5px #6aaaff;
-  z-index: 9999;
+  &__box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 55%;
+    border-top: solid 5px #6aaaff;
+    z-index: 9999;
+  }
 }
 </style>
