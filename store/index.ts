@@ -59,6 +59,10 @@ export const mutations = {
     let copyMarkTitles = state.markTitles
     copyMarkTitles.push(payload)
   },
+  deleteTitle(state: {markTitles: Headlines[]}) {
+    let copyMarkTitles = state.markTitles    
+    copyMarkTitles.splice(0)
+  },
   signOut(state: {markTitles:Headlines[]}) {
     state.markTitles = []
   },
@@ -155,6 +159,7 @@ export const actions = {
   async bookMarks({ commit }:any) {
     if(userId) {
       commit("deleteArticle")
+      commit("deleteTitle")
       const querySnapshot = await getDocs(collection(db, `${userId}`));
       querySnapshot.forEach((doc) => {
         let marksitem = doc.data()
