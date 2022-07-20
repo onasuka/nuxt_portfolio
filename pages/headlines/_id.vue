@@ -10,11 +10,23 @@
           <div class="heading_box">
             <h2 class="heading">{{ article.title }}</h2>
             <div class="btn" v-if="loggedIn">
-              <v-btn-toggle tile color="red accent-3" group>
-                <v-btn>
+              <div v-if="loggedIn" class="btn">
+                <v-btn
+                  v-if="bookMarkDecision[0]"
+                  icon
+                  class="red--text text--accent-3"
+                  @click.prevent="favoriteDelete(article)"
+                >
                   <v-icon>mdi-heart</v-icon>
                 </v-btn>
-              </v-btn-toggle>
+                <v-btn
+                  v-else
+                  icon
+                  @click.prevent="favorite(article)"
+                >
+                  <v-icon>mdi-heart</v-icon>
+                </v-btn>
+              </div>
             </div>
           </div>
           <img :src="article.urlToImage" />
@@ -143,9 +155,12 @@ export default defineComponent({
       isBoldToggle: false,
       isUnderLineToggle: false,
       loggedIn: this.$store.state.loggedIn,
+      bookMarkDecision:[]
     }
   },
-
+  async asyncData({ store }) {
+    let bookMark = await store.dispatch("bookMarks");
+  },
   methods: {
     //文字サイズ設定
     fontSize() {
@@ -182,13 +197,33 @@ export default defineComponent({
     iframeBtn() {
       this.iframeShow == true ? (this.iframeShow = false) : (this.iframeShow = true);
     },
-
+    favorite(article:ArticleInfo) {
+      this.$set(this.bookMarkDecision, 0, true);
+      this.$store.dispatch("bookMark", article);
+    },
+    favoriteDelete(article:ArticleInfo) {
+      this.$set(this.bookMarkDecision, 0, false);
+      this.$store.dispatch("bookMarkDelete", article);
+    },
   },
   computed: {
     article() {
       return this.$store.getters["headlines/headline"];
     },
   },
+  created() {
+    let bookMarksTitle = this.$store.getters.setTitle;
+    let headlines = this.article.title;
+    // ブックマークされているか否かの判定
+    for (let i = 0; i < bookMarksTitle.length; i++) {
+      let bookMarkDecision:boolean[] = this.bookMarkDecision;
+      bookMarksTitle.filter(function (value:string) {
+        if (value === headlines) {
+          bookMarkDecision[0] = true;
+        }
+      });
+    }
+  }
 });
 </script>
 
