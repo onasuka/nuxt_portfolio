@@ -1,41 +1,28 @@
 <template>
   <v-row class="menu-list">
     <v-col class="menu-item">
-      <a @click="selectCategory('')">すべて</a>
+      <a href="/">すべて</a>
     </v-col>
     <v-col class="menu-item">
-      <a @click="selectCategory('business')">ビジネス</a>
+      <a href="/category/business">ビジネス</a>
     </v-col>
     <v-col class="menu-item">
-      <a @click="selectCategory('entertainment')">エンタメ</a>
+      <a href="/category/entertainment">エンタメ</a>
     </v-col>
     <v-col class="menu-item">
-      <a @click="selectCategory('health')">健康</a>
+      <a href="/category/health">健康</a>
     </v-col>
     <v-col class="menu-item">
-      <a @click="selectCategory('science')">サイエンス</a>
+      <a href="/category/science">サイエンス</a>
     </v-col>
     <v-col class="menu-item">
-      <a @click="selectCategory('sports')">スポーツ </a>
+      <a href="/category/sports">スポーツ </a>
     </v-col>
     <v-col class="menu-item">
-      <a @click="selectCategory('technology')">テクノロジー </a>
+      <a href="/category/technology">テクノロジー </a>
     </v-col>
   </v-row>
 </template>
-
-<script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
-  methods: {
-    selectCategory(parameter: object) {
-      const apiUrl = "/api/&category=";
-      console.log(apiUrl + parameter);
-      this.$store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .menu-list {
@@ -65,6 +52,7 @@ export default Vue.extend({
   a {
     font-size: 13px;
     color: #333;
+    text-decoration: none;
     transition: all 0.5s ease;
   }
 }
