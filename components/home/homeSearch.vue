@@ -6,7 +6,7 @@
           <!-- <v-btn class="btn btn-info mb-2" color="primary" @click="searchKeyword()"
             >検索</v-btn
           > -->
-          <a id="search_link" href="/" @click="searchKeyword()" >検索</a>
+          <a id="search_link" @click="searchKeyword()" >検索</a>
         </template>
       </v-text-field>
     </v-col>
