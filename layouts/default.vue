@@ -9,7 +9,7 @@
       fixed
       app
     >
-    <p v-if="loggedIn" class="user_name">
+    <p v-show="loggedIn" class="user_name">
      {{ userName }}
     </p>
       <v-list>
@@ -37,7 +37,6 @@
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"
-      fixed
       app
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
