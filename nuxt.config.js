@@ -2,11 +2,11 @@ require('dotenv').config()
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: false,
+  ssr: true,
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: '20220302_app',
+    title: '英語アプリ',
     htmlAttrs: {
       lang: 'en'
     },

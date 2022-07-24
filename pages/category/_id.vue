@@ -1,16 +1,16 @@
 <template>
   <v-container>
-      <v-row>
-        <v-col>
-          <v-text-field label="検索" type="text" v-model="search_keyword">
-            <template v-slot:append>
-              <v-btn class="btn btn-info mb-2" color="primary" @click="searchKeyword()"
-                >検索
-                </v-btn>
-            </template>
-          </v-text-field>
-        </v-col>
-      </v-row>
+    <v-row>
+      <v-col>
+        <v-text-field label="検索" type="text" v-model="search_keyword">
+          <template v-slot:append>
+            <v-btn class="btn btn-info mb-2" color="primary" @click="searchKeyword()"
+              >検索
+              </v-btn>
+          </template>
+        </v-text-field>
+      </v-col>
+    </v-row>
     <homeMenu />
     <div
       class="article__list"
@@ -66,8 +66,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import homeMenu from "~/components/home/homeMenu.vue";
-export default {
+export default Vue.extend({
   components: {
     homeMenu,
   },
@@ -84,9 +85,10 @@ export default {
     };
   },
 
-  async asyncData({ store }) {
-    const apiUrl = "/api/";
-    let items = await store.dispatch("headlines/loadHeadlines", apiUrl);
+  async asyncData({ store , route }) {
+   const apiUrl = "/api/&category=";
+   const parameter = route.params.id
+    let items = await store.dispatch("headlines/loadHeadlines", apiUrl + parameter);
     let bookMark = await store.dispatch("bookMarks");
     return {
       lists: store.state.headlines.headlines,
@@ -166,7 +168,7 @@ export default {
       this.page = 1;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
