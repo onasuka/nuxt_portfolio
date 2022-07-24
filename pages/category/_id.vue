@@ -1,6 +1,16 @@
 <template>
   <v-container>
-    <homeSearch />
+    <v-row>
+      <v-col>
+        <v-text-field label="検索" type="text" v-model="search_keyword">
+          <template v-slot:append>
+            <v-btn class="btn btn-info mb-2" color="primary" @click="searchKeyword()"
+              >検索
+              </v-btn>
+          </template>
+        </v-text-field>
+      </v-col>
+    </v-row>
     <homeMenu />
     <div
       class="article__list"
@@ -58,11 +68,9 @@
 <script>
 import Vue from 'vue'
 import homeMenu from "~/components/home/homeMenu.vue";
-import homeSearch from "~/components/home/homeSearch.vue";
 export default Vue.extend({
   components: {
     homeMenu,
-    homeSearch,
   },
   data() {
     return {
@@ -73,6 +81,7 @@ export default Vue.extend({
       pageSize: 10,
       bookMarkTitle: [],
       bookMarkDecision: [],
+      search_keyword: "",
     };
   },
 
@@ -115,6 +124,22 @@ export default Vue.extend({
       this.$set(this.bookMarkDecision, id, false);
       this.$store.dispatch("bookMarkDelete", headline);
     },
+    searchKeyword(search_keyword) {
+      let bookMarksTitle = this.lists
+      let retentionArticles = this.viewLists
+      if (this.search_keyword !== "") {
+        this.viewLists = []
+        for (let i = 0; i < bookMarksTitle.length; i++) {
+          let headline = bookMarksTitle[i]
+          let headlineTitle = bookMarksTitle[i].title
+          let headlineDescription = bookMarksTitle[i].description
+          if(headlineTitle.indexOf(this.search_keyword)> -1 ) {
+            this.viewLists.push(headline);
+          }
+        }
+      };
+      return this.viewLists
+    }
   },
   mounted() {
     this.length = Math.ceil(this.lists.length / this.pageSize);
