@@ -10,11 +10,11 @@ https://english-article-adee4.web.app/
 |---|---|
 |![FireShot Capture 003 - 20220302_app - localhost](https://user-images.githubusercontent.com/80244060/178282316-4b4ab7f2-e2ce-440c-88b5-bfc6825684eb.png)|![FireShot Capture 002 - 20220302_app - localhost](https://user-images.githubusercontent.com/80244060/178282266-bea77361-d5ea-47e2-a234-e57c859a7039.png)|
 
-## 仕様技術
+## 使用技術
 
   ・Vue.js 2.6.14
   
-  ・Nuxt,js 2.15.8
+  ・Nuxt.js 2.15.8
   
   ・Vuetify 1.12.3
   
